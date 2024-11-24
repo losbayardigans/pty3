@@ -35,7 +35,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
            .AddSupportedCultures(supportedCultures)
            .AddSupportedUICultures(supportedCultures);
 });
-
+builder.Services.AddResponseCompression();
 var app = builder.Build();
 
 
@@ -49,7 +49,15 @@ var app = builder.Build();
 Console.WriteLine($"Entorno actual: {builder.Environment.EnvironmentName}");
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); 
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        // Agregar el encabezado Cache-Control a los archivos estáticos
+        ctx.Context.Response.Headers.Append(
+            "Cache-Control", "public, max-age=31536000");
+    }
+});
 
 app.UseRouting();  
 app.UseSession();   
