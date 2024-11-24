@@ -23,7 +23,7 @@ namespace patyy.Controllers
             return View();
         }
 
-        // POST: Clientes/Login
+    
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string email, string contrasena)
@@ -43,7 +43,7 @@ namespace patyy.Controllers
                 return View();
             }
 
-            // Verificar si la contraseña ingresada coincide con el hash de la contraseña almacenado
+            //verificamos si la contra es la misma que la creada 
             bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(contrasena, cliente.Contrasena);
 
             if (!isPasswordCorrect)
@@ -52,7 +52,7 @@ namespace patyy.Controllers
                 return View();
             }
 
-            HttpContext.Session.SetInt32("ClienteId", cliente.Id);  // Guardamos el ClienteId en la sesión
+            HttpContext.Session.SetInt32("ClienteId", cliente.Id);  // guardamos al usuario en la sesion es la forma mas basica ,(no pude hacerlo por identy xD)
            
             TempData["SuccessMessage"] = "¡Has iniciado sesión con éxito!";
 
@@ -66,7 +66,7 @@ namespace patyy.Controllers
         // GET: Clientes/Logout
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear(); // Limpiar la sesión
+            HttpContext.Session.Clear(); // Limpiamos la sesion del cliente
             return RedirectToAction("Login");
         }
 
@@ -90,14 +90,14 @@ namespace patyy.Controllers
                     Nombre = model.Nombre,
                     Telefono = model.Telefono,
                     Email = model.Email,
-                    Contrasena = hashedPassword, // Almacena la contraseña hasheada
+                    Contrasena = hashedPassword, // almacenamos la contra hasheada 
                 };
 
-                // Agregar el cliente a la base de datos
+                // Agregamos ala tabala cliente 
                 _context.Clientes.Add(cliente);
                 await _context.SaveChangesAsync();
 
-                // Redirigir al login sin guardar la sesión
+                // nos vamos ala vista login 
                 return RedirectToAction("Login");
             }
 

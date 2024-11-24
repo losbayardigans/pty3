@@ -14,7 +14,7 @@ public class CarroController : Controller
         _context = context;
     }
 
-    // Ver los productos en el carrito de un cliente
+
     public IActionResult Carrito()
     {
         int clienteId = GetClienteId();
@@ -38,7 +38,7 @@ public class CarroController : Controller
         }
     }
 
-    // Agregar un producto al carrito
+
     [HttpPost]
     public async Task<IActionResult> AgregarAlCarrito(int productoId)
     {
@@ -83,7 +83,7 @@ public class CarroController : Controller
         return RedirectToAction("Carrito");
     }
 
-    // Modificar cantidad de productos en el carrito
+ 
     public async Task<IActionResult> ModificarCantidad(int productoId, int cantidad)
     {
         int clienteId = GetClienteId();
@@ -119,7 +119,7 @@ public class CarroController : Controller
         return RedirectToAction("Carrito");
     }
 
-    // Eliminar un producto del carrito
+   
     [HttpPost]
     public async Task<IActionResult> EliminarDelCarrito(int carroId)
     {
@@ -155,7 +155,7 @@ public class CarroController : Controller
         return RedirectToAction("Carrito");
     }
 
-    // Confirmar compra (sin descuentos)
+
     public IActionResult ConfirmarCompra()
     {
         int clienteId = GetClienteId();
@@ -187,7 +187,7 @@ public class CarroController : Controller
         return View(viewModel);
     }
 
-    // Confirmar la compra (POST)
+   
     [HttpPost]
     public async Task<IActionResult> ConfirmarCompra(PedidoPagoViewModel viewModel)
     {
@@ -206,7 +206,7 @@ public class CarroController : Controller
                 return RedirectToAction("Carrito");
             }
 
-            // actualizamos la direccion que el usuario ah ingresado en el formulario podria hacerse con los otros pero por ahora no lo haremos
+            // actualizamos la direccion que el usuario ah ingresado en el formulario gaa
             if (!string.IsNullOrEmpty(viewModel.Direccion) ||
        !string.IsNullOrEmpty(viewModel.Telefono) ||
        !string.IsNullOrEmpty(viewModel.Nombre))
@@ -242,10 +242,10 @@ public class CarroController : Controller
             };
 
             _context.Pedidos.Add(pedido);
-            await _context.SaveChangesAsync(); // Guarda el pedido primero para obtener el ID
-            TempData["PedidoId"] = pedido.Id; // Guarda el ID del pedido en TempData para verificarlo
+            await _context.SaveChangesAsync(); //guardamos cambios 
+            TempData["PedidoId"] = pedido.Id; // guardamos el id para poder verificarlog
 
-            // Ahora que el pedido tiene un ID, agrega los productos del carrito a la tabla PedidoProducto
+            // ahora que existe el id agrega los valores ala nueva tabla pedidoprdoucto
             var carrito = _context.Carros
                 .Where(c => c.ClienteId == clienteId)
                 .Include(c => c.Producto)
@@ -255,18 +255,18 @@ public class CarroController : Controller
             {
                 var pedidoProducto = new PedidoProducto
                 {
-                    PedidoId = pedido.Id, // Asocia el ID del pedido recién creado
-                    ProductoId = carro.ProductoId, // El producto del carrito
-                    Cantidad = carro.Cantidad // La cantidad que el usuario tiene en el carrito
+                    PedidoId = pedido.Id, //asociamos el nuevo id 
+                    ProductoId = carro.ProductoId, // tenemos el id del carro 
+                    Cantidad = carro.Cantidad // los productos que tiene en l carro 
                 };
 
                 _context.PedidoProductos.Add(pedidoProducto);
             }
 
-            await _context.SaveChangesAsync(); // Guarda los productos del pedido
-            TempData["PedidoProductos"] = carrito.Count; // Guarda la cantidad de productos agregados al pedido
+            await _context.SaveChangesAsync(); // si todo esta bien guardamos cambios 
+            TempData["PedidoProductos"] = carrito.Count; // guardamos la cantidad de producros 
 
-            // Crear y guardar el pago
+            // creamos y luego guardamos el pago ojo que el pago es simulado noma xd
             var pago = new Pago
             {
                 PedidoId = pedido.Id,
@@ -277,7 +277,7 @@ public class CarroController : Controller
 
             _context.Pagos.Add(pago);
             await _context.SaveChangesAsync();
-            TempData["PagoEstado"] = pago.EstadoPago; // Guarda el estado del pago para verificarlo
+            TempData["PagoEstado"] = pago.EstadoPago; //guardamos el estado de pago para verificarlo 
 
             // Limpiar el carrito después de la compra
             var carritoCliente = _context.Carros.Where(c => c.ClienteId == clienteId).ToList();
@@ -294,8 +294,7 @@ public class CarroController : Controller
         }
     }
 
-    // Mostrar la boleta del pedido
-    // Mostrar la boleta del pedido
+//esto muestra la vista del pedido 
     public IActionResult FinalizarCompra(int id)
     {
         
@@ -325,10 +324,10 @@ public class CarroController : Controller
         var viewModel = new PedidoPagoViewModel
         {
             Pedido = pedido,
-            PedidoProductos = pedido.PedidoProductos?.ToList() ?? new List<PedidoProducto>(), // Evita null
+            PedidoProductos = pedido.PedidoProductos?.ToList() ?? new List<PedidoProducto>(), // evitamos que sea nulo !
             Total = total ?? 0m,
             Pago = pago ?? new Pago(),
-            Nombre = pedido.Cliente.Nombre ??string.Empty ,
+            Nombre = pedido.Cliente.Nombre ??string.Empty ,//estos evitan que si son nulos se pongan como cadena vacias 
             Telefono = pedido.Cliente.Telefono ?? string.Empty,
             Direccion = pedido.Cliente.Direccion ?? string.Empty
 
@@ -340,18 +339,18 @@ public class CarroController : Controller
     }
 
 
-
+    //almacenamos al cliente por sesion !
     private int GetClienteId()
     {
         var clienteId = HttpContext.Session.GetInt32("ClienteId");
 
-        // Si no se encuentra el clienteId en la sesión, redirigir a la página de login
+        // si no encuentra al usuairo dirigimos al login 
         if (clienteId == null)
         {
-            return -1;  // Retorna -1 para indicar que el usuario no está logueado
+            return -1;  // retornamos para ver que el usuario no esta registrado
         }
 
-        return clienteId.Value;  // Retorna el clienteId almacenado
+        return clienteId.Value;  // retornamos al cliente registrado
     }
 
 }

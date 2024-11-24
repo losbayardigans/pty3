@@ -39,7 +39,7 @@ public class ProductosController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ImportCsv(IFormFile file)
-    {
+    {//este es el metodo para poder importar csv 
         if (file != null && file.Length > 0)
         {
             Console.WriteLine($"Archivo recibido: {file.FileName}, tamaño: {file.Length} bytes");
@@ -59,12 +59,12 @@ public class ProductosController : Controller
                     var productos = new List<Producto>();
                     var errores = new List<string>();
 
-                    // Cargar las categorías, proveedores y etiquetas en memoria sin rastreo
+                    // cargamos los 3 tipo en memoria prohibinedole el tracking 
                     var categorias = _context.Categorias.AsNoTracking().ToList();
                     var proveedores = _context.Proveedores.AsNoTracking().ToList();
                     var etiquetas = _context.Etiquetas.AsNoTracking().ToList();
 
-                    // Buscar el ID del proveedor "Proveedor1"
+                    // Bbusca el id del proveedor 1 en caso de que haya mas no cacho pk asi nomas me dejaba xdddd
                     var proveedor1 = proveedores.FirstOrDefault(p => p.Nombre?.ToLower().Trim() == "proveedor1");
 
                     if (proveedor1 == null)
@@ -75,7 +75,7 @@ public class ProductosController : Controller
 
                     foreach (var record in records)
                     {
-                        // Verificar si el producto ya existe en la base de datos
+                        // verificamos si el producto ya existe en la base 
                         var productoExistente = _context.Productos
                           .FirstOrDefault(p => (p.Nombre != null && record.Nombre != null) &&
                      p.Nombre.ToLower() == record.Nombre.ToLower());
@@ -83,7 +83,7 @@ public class ProductosController : Controller
 
                         if (productoExistente != null)
                         {
-                            // Buscar la categoría y la etiqueta
+                            // Bsca la categoria y etiqueta 
                             var categoria = categorias.FirstOrDefault(c => (c.Nombre?.ToLower().Trim() ?? "") == (record.Categoria?.ToLower().Trim() ?? ""));
                             var etiqueta = etiquetas.FirstOrDefault(e => (e.Nombre?.ToLower().Trim() ?? "") == (record.Etiqueta?.ToLower().Trim() ?? ""));
 
@@ -97,7 +97,7 @@ public class ProductosController : Controller
                             else
                                 errores.Add($"Etiqueta '{record.Etiqueta}' no válida para el producto {record.Nombre}.");
 
-                            // Actualizar el producto
+                            // Actualizamos el contenido
                             productoExistente.Descripcion = record.Descripcion ?? productoExistente.Descripcion;
                             productoExistente.Precio = record.Precio;
                             productoExistente.Stock = record.Stock;
@@ -107,7 +107,7 @@ public class ProductosController : Controller
                         }
                         else
                         {
-                            // Crear un nuevo producto solo si la categoría y la etiqueta son válidas
+                            // se crea un nuevo pedido si la etiqueta y producto esta correcto
                             var categoria = categorias.FirstOrDefault(c => (c.Nombre?.ToLower().Trim() ?? "") == (record.Categoria?.ToLower().Trim() ?? ""));
                             var etiqueta = etiquetas.FirstOrDefault(e => (e.Nombre?.ToLower().Trim() ?? "") == (record.Etiqueta?.ToLower().Trim() ?? ""));
 
@@ -133,7 +133,7 @@ public class ProductosController : Controller
                         }
                     }
 
-                    // Si hay productos válidos, se insertan en la base de datos
+                    //si hay productos validos se insertan en la base de datos 
                     if (productos.Any())
                     {
                         _context.AddRange(productos);
@@ -142,7 +142,7 @@ public class ProductosController : Controller
                         Console.WriteLine($"Se han importado {productos.Count} productos.");
                     }
 
-                    // Si hubo errores, mostramos un mensaje detallado
+                    // y si no pues el erro se mostrara 
                     if (errores.Any())
                     {
                         TempData["ErrorMessage"] = string.Join("<br/>", errores);
@@ -161,7 +161,7 @@ public class ProductosController : Controller
         TempData["ErrorMessage"] = "No se ha seleccionado un archivo válido.";
         return RedirectToAction(nameof(Index));
     }
-
+    //esta clase es para hacer la importacion de los productos por csv no t
     public class ProductoImportCsv
     {
         public string? Nombre { get; set; }
