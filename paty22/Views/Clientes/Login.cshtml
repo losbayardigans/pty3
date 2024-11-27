@@ -3,15 +3,82 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Login</h1>
+<style>
+    body {
+        background-color: #f8f9fa; /* Fondo gris claro */
+        color: #333333; /* Texto en gris oscuro */
+        font-family: Arial, sans-serif;
+    }
 
-<form method="post" asp-action="Login">
-    <label for="email">Correo electrónico:</label>
-    <input type="email" id="email" name="email" required />
+    .login-container {
+        max-width: 400px; /* Formulario más pequeño */
+        margin: 50px auto; /* Centrado vertical y horizontal */
+        background-color: #ffffff; /* Fondo blanco */
+        padding: 20px;
+        border: 1px solid #cccccc; /* Borde gris claro */
+        border-radius: 10px; /* Bordes redondeados */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    }
 
-    <label for="contrasena">Contraseña:</label>
-    <input type="password" id="contrasena" name="contrasena" required />
+        .login-container h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #000000; /* Negro */
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-    <button type="submit">Iniciar sesión</button>
-</form>
+    .form-label {
+        font-weight: bold;
+        color: #555555; /* Gris medio */
+        margin-bottom: 5px;
+        display: block;
+    }
 
+    .form-control {
+        width: 100%;
+        border: 1px solid #bbbbbb; /* Bordes grises */
+        border-radius: 5px; /* Bordes suaves */
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+        .form-control:focus {
+            border-color: #666666; /* Bordes gris oscuro al enfocar */
+            box-shadow: none; /* Sin sombra al enfocar */
+        }
+
+    .btn-submit {
+        width: 100%;
+        background-color: #333333; /* Gris oscuro */
+        color: #ffffff; /* Blanco */
+        font-weight: bold;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-submit:hover {
+            background-color: #555555; /* Gris medio */
+        }
+
+    .alert-danger {
+        font-size: 0.9rem;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="login-container">
+    <h1>Login</h1>
+
+    <form method="post" asp-action="Login">
+        <label for="email" class="form-label">Correo electrónico:</label>
+        <input type="email" id="email" name="email" class="form-control" required />
+
+        <label for="contrasena" class="form-label">Contraseña:</label>
+        <input type="password" id="contrasena" name="contrasena" class="form-control" required />
+
+        <button type="submit" class="btn-submit">Iniciar sesión</button>
+    </form>
+</div>

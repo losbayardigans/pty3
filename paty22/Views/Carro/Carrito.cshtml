@@ -1,80 +1,167 @@
-﻿@model List<paty22.Models.Carro> 
+﻿@model List<paty22.Models.Carro>
 @{
     ViewData["Title"] = "Carrito de Compras";
 }
 
-<h2>@ViewData["Title"]</h2>
+<style>
+    body {
+        background-color: #f8f9fa; /* Fondo gris claro */
+        font-family: Arial, sans-serif;
+    }
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["SuccessMessage"]
-    </div>
-}
+    .carrito-container {
+        max-width: 800px; /* Ancho del contenido */
+        margin: 20px auto; /* Centrado */
+        background-color: #ffffff; /* Fondo blanco */
+        padding: 20px;
+        border-radius: 10px; /* Bordes redondeados */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    }
 
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["ErrorMessage"]
-    </div>
-}
+    h2 {
+        text-align: center;
+        color: #333333; /* Gris oscuro */
+        font-size: 1.8rem;
+    }
 
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
 
-@if (Model != null && Model.Count > 0)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>Total</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+        .table th, .table td {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 1px solid #cccccc; /* Separadores grises */
+        }
+
+        .table th {
+            background-color: #f2f2f2; /* Fondo claro */
+            font-weight: bold;
+            color: #555555; /* Gris medio */
+        }
+
+        .table td {
+            color: #333333; /* Gris oscuro */
+        }
+
+    .btn {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+        border-radius: 5px;
+    }
+
+    .btn-primary {
+        background-color: #333333; /* Gris oscuro */
+        color: #ffffff;
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background-color: #555555; /* Gris medio */
+        }
+
+    .btn-danger {
+        background-color: #ff4d4d; /* Rojo claro */
+        color: #ffffff;
+        border: none;
+    }
+
+        .btn-danger:hover {
+            background-color: #cc0000; /* Rojo intenso */
+        }
+
+    .btn-secondary {
+        background-color: #dddddd; /* Gris claro */
+        color: #333333;
+    }
+
+    .btn-warning {
+        background-color: #f0ad4e; /* Naranja suave */
+        color: #ffffff;
+    }
+
+    .total-container {
+        text-align: right;
+        margin-top: 20px;
+        font-size: 1.2rem;
+        color: #333333; /* Gris oscuro */
+    }
+
+    .empty-cart {
+        text-align: center;
+        font-size: 1rem;
+        color: #777777; /* Gris claro */
+        margin-top: 20px;
+    }
+</style>
+
+<div class="carrito-container">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@item.Producto.Nombre</td>
-                    <td>@item.Producto.Precio.ToString("C")</td>
-                    <td>
-                        <form method="post" action="@Url.Action("ModificarCantidad", "Carro")">
-                            <input type="hidden" name="productoId" value="@item.ProductoId" />
-                            <input type="number" name="cantidad" value="@item.Cantidad" min="1" class="form-control" style="width: 70px;" />
-                            <button type="submit" class="btn btn-primary btn-sm">Modificar</button>
-                        </form>
-                    </td>
-                                  <td>@((item.Producto.Precio * item.Cantidad).ToString("N0"))</td>
-
-
-                    <td>
-                        <form method="post" action="@Url.Action("EliminarDelCarrito", "Carro")">
-                            <input type="hidden" name="carroId" value="@item.Id" />
-                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                        </form>
-                    </td>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Producto.Nombre</td>
+                        <td>@item.Producto.Precio.ToString("C")</td>
+                        <td>
+                            <form method="post" action="@Url.Action("ModificarCantidad", "Carro")" style="display: inline-block;">
+                                <input type="hidden" name="productoId" value="@item.ProductoId" />
+                                <input type="number" name="cantidad" value="@item.Cantidad" min="1" class="form-control" style="width: 70px; display: inline-block;" />
+                                <button type="submit" class="btn btn-primary btn-sm">Modificar</button>
+                            </form>
+                        </td>
+                        <td>@((item.Producto.Precio * item.Cantidad).ToString("N0"))</td>
+                        <td>
+                            <form method="post" action="@Url.Action("EliminarDelCarrito", "Carro")">
+                                <input type="hidden" name="carroId" value="@item.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-    <div>
-      <td>Total de productos: @ViewBag.Total.ToString("C")</td>
+        <div class="total-container">
+            Total de productos: @ViewBag.Total.ToString("C")
+        </div>
+    }
+    else
+    {
+        <p class="empty-cart">No tienes productos en el carrito.</p>
+    }
 
-        
-
-
-
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Productos")" class="btn btn-secondary">Seguir comprando</a>
+        <a href="@Url.Action("ConfirmarCompra", "Carro")" class="btn btn-warning">Confirmar compra</a>
     </div>
-}
-else
-{
-    <p>No tienes productos en el carrito.</p>
-}
-
-<!-- Enlaces para volver al listado de productos o a la confirmación de compra -->
-<div>
-    <a href="@Url.Action("Index", "Productos")" class="btn btn-secondary">Seguir comprando</a>
-    <a href="@Url.Action("ConfirmarCompra", "Carro")" class="btn btn-warning">Confirmar compra</a>
 </div>
