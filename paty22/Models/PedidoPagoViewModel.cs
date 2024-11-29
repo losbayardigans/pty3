@@ -6,7 +6,7 @@
         public List<PedidoProducto> PedidoProductos { get; set; } = new List<PedidoProducto>(); // Inicializa aquí
         public decimal Total { get; set; }
         public Pago Pago { get; set; } = new Pago();
-        
+    
 
         // Datos del cliente
         public string? Nombre { get; set; }   // Valor por defecto: cadena vacía

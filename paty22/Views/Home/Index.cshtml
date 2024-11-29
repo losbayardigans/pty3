@@ -1,4 +1,4 @@
-﻿﻿@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 <html>
@@ -8,23 +8,36 @@
 <head>
     <title>@ViewData["Title"]</title>
     <style>
-        /* Estilos del carrusel */
-        .carousel-item img {
-            border-radius: 20px;
-            height: 400px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+
+        body, ul, li, p, a, label, input, div {
+            font-size: 18px !important;
+            font-weight: 300 !important;
         }
 
-        .carousel-indicators button {
-            background-color: #007bff;
+        .h1 {
+            font-size: 48px !important;
+            font-weight: 200 !important;
         }
 
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
+        .h2 {
+            font-size: 30px !important;
+            font-weight: 300;
+            color: red !important; /* Color rojo para .h2 */
+        }
+
+        #template-mo-zay-hero-carousel .carousel-indicators li {
+            margin-top: -50px;
+            background-color: black;
+        }
+
+        #template-mo-zay-hero-carousel {
+            background-color: white;
+        }
+        #template-mo-zay-hero-carousel .carousel-control-next i,
+        #template-mo-zay-hero-carousel .carousel-control-prev i {
+            color: #000000 !important;
+            font-size: 2.8em !important;
         }
 
         .carousel {
@@ -53,75 +66,152 @@
             color: #007bff;
             margin-bottom: 15px;
         }
+
+        .text-gris {
+            color: #6c757d;
+        }
+
+        .text-dark {
+            color: #343a40;
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            font-weight: 300;
+        }
     </style>
 </head>
 
 <body>
-    <!-- Carrusel -->
-    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        </div>
+
+    <div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="0" class="active"></li>
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="1"></li>
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="2"></li>
+        </ol>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="~/img/logo1.jpg" class="d-block w-100" alt="logo1">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" src="@Url.Content("~/img/logo1.jpg")" alt="Logo 1">
+                        </div>
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left align-self-center">
+                                <h1 class="h1 text-gris"><b>Patty</b> eCommerce</h1>
+                                <p class="text-dark lead">
+                                    ¡Bienvenido a Patty's eCommerce! 🌟 Descubre los productos más exclusivos, de alta calidad y a precios que no podrás resistir. ¡Haz tu compra hoy y vive una experiencia única de compra online! 🛍️
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="carousel-item">
-                <img src="~/img/logo2.jpg" class="d-block w-100" alt="logo2">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" src="@Url.Content("~/img/logo2.jpg")" alt="Logo 2">
+                        </div>
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left">
+                                <h1 class="h1 text-gris">Tu compra, tu elección</h1>
+                                <p class="text-dark lead">
+                                    ¡Tu compra, tu comodidad! 🛒 Con Patty's eCommerce, disfruta de un proceso de compra rápido, seguro y sin complicaciones. Encuentra lo que necesitas en un solo clic y recibe tu pedido con total confianza. 🚚
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="carousel-item">
-                <img src="~/img/logo3.jpg" class="d-block w-100" alt="logo3">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" src="@Url.Content("~/img/logo3.jpg")" alt="Logo 3">
+                        </div>
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left">
+                                <h1 class="h1 text-gris">Ofertas Especiales</h1>
+                                <p class="text-dark lead">
+                                    ¡Ofertas exclusivas solo para ti! 🚀 No pierdas la oportunidad de conseguir los productos más populares a precios irresistibles. ¡Haz tu compra ahora y disfruta de una experiencia única en Patty's eCommerce! 🛒
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
+        <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="prev">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <a class="carousel-control-next text-decoration-none w-auto pe-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="next">
+            <i class="fas fa-chevron-right"></i>
+        </a>
     </div>
 
     
-    <div class="services-section bg-light">
-        <h2 class="mb-4">Nuestros Servicios</h2>
-        <div class="container">
-            <div class="row">
-               
-                <div class="col-md-4 mb-4">
-                    <div class="service-card p-4 bg-white">
-                        <div class="service-icon">
-                            <i class="bi bi-truck"></i>
-                        </div>
-                        <h4>Envíos Rápidos</h4>
-                        <p>Ofrecemos envíos rápidos y seguros para que tus productos lleguen en el menor tiempo posible.</p>
-                    </div>
-                </div>
-              
-                <div class="col-md-4 mb-4">
-                    <div class="service-card p-4 bg-white">
-                        <div class="service-icon">
-                            <i class="bi bi-box-seam"></i>
-                        </div>
-                        <h4>Empaque Seguro</h4>
-                        <p>Nos aseguramos de que todos los productos se empaquen cuidadosamente para su protección.</p>
-                    </div>
-                </div>
-               
-                <div class="col-md-4 mb-4">
-                    <div class="service-card p-4 bg-white">
-                        <div class="service-icon">
-                            <i class="bi bi-phone"></i>
-                        </div>
-                        <h4>Atención al Cliente</h4>
-                        <p>Estamos disponibles para ayudarte en todo momento con cualquier consulta o problema que puedas tener mi king .</p>
-                    </div>
-                </div>
+    <section class="container py-5">
+        <div class="row text-center pt-3">
+            <div class="col-lg-6 m-auto">
+                <h1 class="h1 text-gris">Categorías Más Compradas</h1>
+                <p>
+                    Echa un vistazo a lo que más están comprando nuestros clientes. ¡Seguro encuentras algo que te guste, si necesitas ayuda puedes contactarnos!
+                </p>
             </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="col-12 col-md-4 p-5 mt-3 d-flex flex-column align-items-center">
+                <a href="#"><img src="@Url.Content("~/img/agua_mineral.jpg")" class="img-fluid w-100"></a>
+                <h5 class="text-center mt-3 mb-3">Bebestibles</h5>
+                <p class="text-center">
+                    <a class="btn btn-dark" href="@Url.Action("Index", "Productos")">Ir a productos</a>
+                </p>
+            </div>
+
+            <div class="col-12 col-md-4 p-5 mt-3">
+                <a href="#"><img src="@Url.Content("~/img/chocolate_belga.jpg")" class="img-fluid border"></a>
+                <h2 class="h5 text-center mt-3 mb-3">Comestibles</h2>
+                <p class="text-center">
+                    <a class="btn btn-dark" href="@Url.Action("Index", "Productos")">Ir a productos</a>
+                </p>
+            </div>
+            <div class="col-md-4 p-5 mt-3">
+                <a href="#"><img src="@Url.Content("~/img/ron_premium.jpg")" class="img-fluid border"></a>
+                <h2 class="h5 text-center mt-3 mb-3">Bebidas Alcohólicas</h2>
+                <p class="text-center">
+                    <a class="btn btn-dark" href="@Url.Action("Index", "Productos")">Ir a productos</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="row text-center pt-3">
+            <div class="col-lg-6 m-auto">
+                <h1 class="h1 text-gris">Síguenos en Redes Sociales</h1>
+                <p>Conéctate con nosotros y mantente al día con las últimas novedades.</p>
+            </div>
+        </div>
+
+        <div class="social-icons-container">
+
+            <div class="instagram-v">
+
+                <a href="https://www.instagram.com/una_persona_f0/" target="_blank" class="social-icon instagram">
+                    <i class="fab fa-instagram fa-3x"></i>
+                </a>
+                <div class="social-icon facebook">
+                    <a href="https://www.instagram.com" target="_blank"><i class="fab fa-facebook fa-3x"></i></a>
+                </div>
+
+                <a href="https://instagram.com/user2" target="_blank" class="social-icon instagram">
+                    <i class="fab fa-instagram fa-3x"></i>
+                </a>
+            </div>
+
+        </div>
+    </section>
 </body>
 </html>

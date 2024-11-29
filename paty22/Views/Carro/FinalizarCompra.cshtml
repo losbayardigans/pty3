@@ -44,6 +44,8 @@
     <p><strong>Fecha de Pago:</strong> @Model.Pago.FechaPago.ToString("dd/MM/yyyy HH:mm")</p>
 
     <hr>
+    <hr style="border: 1px solid #ccc; margin: 20px 0;">
+    <a href="@Url.Action("GenerarPDF", "Pedidos", new { pedidoId = Model.Pedido.Id  })" class="btn btn-primary">Descargar PDF</a>
 
     <footer style="text-align: center; padding-top: 20px;">
         <p>¡Gracias por tu compra!</p>

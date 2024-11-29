@@ -1,0 +1,45 @@
+/* Contenedor para los iconos */
+.social-icons-container {
+    display: flex;
+    justify-content: center; /* Centra los iconos */
+    align-items: center;
+    gap: 20px; /* Espaciado entre los iconos */
+    margin-top: 50px;
+}
+
+.social-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ 
+    padding: 50px;
+    border-radius: 20%;
+    font-size: 10px;
+    color: red;
+    width: 52px;
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+
+    .social-icon:hover {
+        transform: scale(1.2); 
+    }
+
+.instagram-v {
+    display: flex; 
+    gap: 15px;
+}
+
+
+.social-icons-container {
+    max-width: 350px;
+    margin: 0 auto; 
+}
+
+
+
+
+
+
+

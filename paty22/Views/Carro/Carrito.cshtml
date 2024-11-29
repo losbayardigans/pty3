@@ -131,7 +131,8 @@
                 {
                     <tr>
                         <td>@item.Producto.Nombre</td>
-                        <td>@item.Producto.Precio.ToString("C")</td>
+                        <td>@item.Producto.Precio.ToString("C", new System.Globalization.CultureInfo("es-CL"))
+</td>
                         <td>
                             <form method="post" action="@Url.Action("ModificarCantidad", "Carro")" style="display: inline-block;">
                                 <input type="hidden" name="productoId" value="@item.ProductoId" />
@@ -152,7 +153,8 @@
         </table>
 
         <div class="total-container">
-            Total de productos: @ViewBag.Total.ToString("C")
+            Total de productos: @ViewBag.Total.ToString("C", new System.Globalization.CultureInfo("es-CL"))
+
         </div>
     }
     else

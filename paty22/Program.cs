@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using paty22.Models;
-using System.IO;
-using System.Net;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,16 +18,16 @@ builder.Services.AddDbContext<ProyectoFinalContext>(options =>
     ));
 
 // Configuración de sesiones
-builder.Services.AddDistributedMemoryCache(); 
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.Cookie.Name = ".MyApp.Session"; 
+    options.Cookie.Name = ".MyApp.Session";
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    options.IdleTimeout = TimeSpan.FromMinutes(30); 
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
 
-
+// Configuración de localización
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new[] { "es-ES", "en-US", "es-CL" };
@@ -35,16 +35,17 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
            .AddSupportedCultures(supportedCultures)
            .AddSupportedUICultures(supportedCultures);
 });
+
 builder.Services.AddResponseCompression();
+
+// Registrar DinkToPdf
+builder.Services.AddSingleton<IConverter, SynchronizedConverter>(sp => new SynchronizedConverter(new PdfTools()));
+
 var app = builder.Build();
 
-
-
-    app.UseDeveloperExceptionPage(); 
-
-
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+app.UseDeveloperExceptionPage();
+app.UseExceptionHandler("/Home/Error");
+app.UseHsts();
 
 Console.WriteLine($"Entorno actual: {builder.Environment.EnvironmentName}");
 
@@ -58,15 +59,21 @@ app.UseStaticFiles(new StaticFileOptions
             "Cache-Control", "public, max-age=31536000");
     }
 });
+app.UseRequestLocalization();
 
-app.UseRouting();  
-app.UseSession();   
-app.UseAuthorization();  
+app.UseRouting();
+app.UseSession();
+app.UseAuthorization();
 builder.Host.UseEnvironment("Development");
 
 // Mapeo de rutas
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "pedidosPDF",
+    pattern: "Pedidos/GenerarPDF/{pedidoId}",
+    defaults: new { controller = "Pedidos", action = "GenerarPDF" });
 
 app.Run();

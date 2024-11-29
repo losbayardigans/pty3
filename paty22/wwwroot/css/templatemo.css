@@ -1,0 +1,44 @@
+body,a {
+    font-size: 18px !important;
+    font-weight: 300 !important;
+}
+
+
+@media (min-width: 576px) {
+    .product-wap .h3, .product-wap li, .product-wap i, .product-wap p {
+        font-size: 12px !important;
+    }
+
+    .product-wap .product-color-dot {
+        width: 6px;
+        height: 6px;
+    }
+}
+
+
+@media (min-width: 768px) {
+    #templatemo_main_nav .navbar-nav {
+        max-width: 450px;
+    }
+}
+
+
+@media (min-width: 992px) {
+    #templatemo_main_nav .navbar-nav {
+        max-width: 550px;
+    }
+
+    #template-mo-zay-hero-carousel .carousel-item {
+        min-height: 30rem !important;
+    }
+
+    .product-wap .h3, .product-wap li, .product-wap i, .product-wap p {
+        font-size: 18px !important;
+    }
+
+    .product-wap .product-color-dot {
+        width: 12px;
+        height: 12px;
+    }
+}
+

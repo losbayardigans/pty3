@@ -4,56 +4,70 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] Paty</title>
+    <link rel="icon" type="image/png" href="~/img/favicon-32x32.png" sizes="32x32">
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="@Url.Content("~/css/bootstrap.min.css")">
+  
+    
+    <link rel="stylesheet" href="@Url.Content("~/css/templatemo.css")">
+    <link rel="stylesheet" href="~/css/custom.css?v=@DateTime.Now.Ticks" />
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
     <style>
-        /* Estilos personalizados */
-        body {
-            background-color: #f8f9fa; /* Gris claro */
-            color: #333333; /* Gris oscuro */
+       
+       body {
+            background-color: white; 
+            color: #333333;
+            height: 100%;
+            margin: 0; 
         }
 
         .custom-navbar {
-            background-color: #ffffff; /* Blanco */
-            border-bottom: 1px solid #cccccc; /* Línea gris clara */
+            background-color: #ffffff;
+            border-bottom: 1px solid #cccccc; 
         }
 
         .navbar-brand {
             font-weight: bold;
-            color: #000000; /* Negro */
+            color: #000000;
         }
 
             .navbar-brand:hover {
-                color: #555555; /* Gris intermedio */
+                color: #555555; 
             }
 
         .navbar-nav .nav-link {
-            color: #333333; /* Gris oscuro */
+            color: #333333;
             font-size: 1.1rem;
             transition: color 0.3s ease-in-out;
         }
 
             .navbar-nav .nav-link:hover {
-                color: #000000; /* Negro */
+                color: #000000; 
             }
 
         .footer {
-            background-color: #333333; /* Gris oscuro */
-            color: #ffffff; /* Blanco */
-            padding: 15px 0;
+            background-color: #333333;
+            color: #ffffff;
+            padding: 5px 0;
             text-align: center;
         }
 
             .footer a {
-                color: #cccccc; /* Gris claro */
+                color: #cccccc; 
                 text-decoration: none;
             }
 
                 .footer a:hover {
-                    color: #ffffff; /* Blanco */
+                    color: #ffffff; 
                 }
 
-        /* Estilo de imagen del carrito */
+        
         .nav-link img {
             height: 40px;
             transition: transform 0.3s ease-in-out;
@@ -63,14 +77,44 @@
                 transform: scale(1.1);
             }
 
-        /* Botón del menú móvil */
+      
         .navbar-toggler-icon {
-            filter: invert(1); /* Hace el ícono blanco para fondo claro */
+            filter: invert(1); 
         }
+       
+        .contact-header {
+            background-color: #171616; 
+            color: white; 
+            padding: 2px 0;
+          
+            font-size: 16px; 
+            font-weight: bold; 
+        }
+
+            .contact-header a {
+                color: white; 
+                text-decoration: none; 
+            }
+
+                .contact-header a:hover {
+                    text-decoration: underline; 
+                }
+
+            .contact-header i {
+                color: red; /* Icono con color rojito */
+            }
+
     </style>
 </head>
 <body>
+   
     <header>
+        <div class="contact-header">
+            <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:CodecraftSolution@gmail.com">CodecraftSolution@gmail.com</a>
+            <i class="fa fa-phone mx-2"></i>
+            <a class="navbar-sm-brand text-light text-decoration-none" href="tel:+56 941654821">+56 941-654-821</a>
+        </div>
+
         <nav class="navbar navbar-expand-lg custom-navbar">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Paty</a>
@@ -113,6 +157,7 @@
             </div>
         </nav>
     </header>
+   
 
     <div class="container">
         <main role="main" class="pb-3">
@@ -131,9 +176,15 @@
         </div>
     </footer>
 
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+   
+  
+    <script src="@Url.Content("~/js/templatemo.js")"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

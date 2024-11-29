@@ -296,47 +296,38 @@ public class CarroController : Controller
 
 //esto muestra la vista del pedido 
     public IActionResult FinalizarCompra(int id)
+{
+    var pedido = _context.Pedidos
+        .Include(p => p.PedidoProductos)
+            .ThenInclude(pp => pp.Producto)
+        .Include(p => p.Cliente)
+        .FirstOrDefault(p => p.Id == id);
+
+    if (pedido == null)
     {
-        
-
-        var pedido = _context.Pedidos
-            .Include(p => p.PedidoProductos)
-                .ThenInclude(pp => pp.Producto)
-                   .Include(p => p.Cliente)
-             .FirstOrDefault(p => p.Id == id);
-
-        if (pedido == null)
-        {
-            TempData["ErrorMessage"] = "Pedido no encontrado.";
-            return RedirectToAction("Carrito");
-        }
-
-        if (pedido.Cliente == null)
-        {
-            TempData["ErrorMessage"] = "Cliente no encontrado.";
-            return RedirectToAction("Carrito");
-        }
-
-        var pago = _context.Pagos.FirstOrDefault(p => p.PedidoId == id);
-
-        var total = pedido.PedidoProductos.Sum(pp => pp.Cantidad * pp.Producto.Precio);
-
-        var viewModel = new PedidoPagoViewModel
-        {
-            Pedido = pedido,
-            PedidoProductos = pedido.PedidoProductos?.ToList() ?? new List<PedidoProducto>(), // evitamos que sea nulo !
-            Total = total ?? 0m,
-            Pago = pago ?? new Pago(),
-            Nombre = pedido.Cliente.Nombre ??string.Empty ,//estos evitan que si son nulos se pongan como cadena vacias 
-            Telefono = pedido.Cliente.Telefono ?? string.Empty,
-            Direccion = pedido.Cliente.Direccion ?? string.Empty
-
-        };
-        Console.WriteLine($"Cliente: {pedido.Cliente?.Nombre}, Teléfono: {pedido.Cliente?.Telefono}, Dirección: {pedido.Cliente?.Direccion}");
-
-        return View(viewModel);
-
+        TempData["ErrorMessage"] = "Pedido no encontrado.";
+        return RedirectToAction("Carrito");
     }
+
+    var pago = _context.Pagos.FirstOrDefault(p => p.PedidoId == id);
+
+    var total = pedido.PedidoProductos.Sum(pp => pp.Cantidad * pp.Producto.Precio);
+
+    var viewModel = new PedidoPagoViewModel
+    {
+        Pedido = pedido,
+        PedidoProductos = pedido.PedidoProductos?.ToList() ?? new List<PedidoProducto>(),
+        Total = total ?? 0m,
+        Pago = pago ?? new Pago(),
+        Nombre = pedido.Cliente.Nombre ?? string.Empty,
+        Telefono = pedido.Cliente.Telefono ?? string.Empty,
+        Direccion = pedido.Cliente.Direccion ?? string.Empty
+    };
+
+    return View(viewModel);
+}
+
+    
 
 
     //almacenamos al cliente por sesion !
