@@ -1,7 +1,8 @@
-body,a {
+body, ul, li, p, a, label, input, div {
     font-size: 18px !important;
     font-weight: 300 !important;
 }
+
 
 
 @media (min-width: 576px) {

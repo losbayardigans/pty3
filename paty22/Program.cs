@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using paty22.Models;
 using DinkToPdf;
 using DinkToPdf.Contracts;
+using paty22.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,11 @@ builder.Services.AddDbContext<ProyectoFinalContext>(options =>
         builder.Configuration.GetConnectionString("Connection"),
         ServerVersion.Parse("10.4.25-mariadb") // Ajusta la versión si es necesario
     ));
+
+builder.Services.Configure<SmtpSettings>(
+    builder.Configuration.GetSection("SmtpSettings"));
+
+builder.Services.AddTransient<EmailService>();
 
 // Configuración de sesiones
 builder.Services.AddDistributedMemoryCache();
@@ -60,7 +66,7 @@ app.UseStaticFiles(new StaticFileOptions
     }
 });
 app.UseRequestLocalization();
-
+app.UseHttpsRedirection();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
@@ -71,9 +77,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapControllerRoute(
-    name: "pedidosPDF",
-    pattern: "Pedidos/GenerarPDF/{pedidoId}",
-    defaults: new { controller = "Pedidos", action = "GenerarPDF" });
 
 app.Run();

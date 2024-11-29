@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="@Url.Content("~/css/bootstrap.min.css")">
   
     
-    <link rel="stylesheet" href="@Url.Content("~/css/templatemo.css")">
+    <link rel="stylesheet" href="~/css/templatemo.css" />
     <link rel="stylesheet" href="~/css/custom.css?v=@DateTime.Now.Ticks" />
 
     <!-- Google Fonts -->
@@ -86,9 +86,10 @@
             background-color: #171616; 
             color: white; 
             padding: 2px 0;
+            font-size: 18px !important;
+            font-weight: 300 !important;
           
-            font-size: 16px; 
-            font-weight: bold; 
+          
         }
 
             .contact-header a {
@@ -110,7 +111,7 @@
    
     <header>
         <div class="contact-header">
-            <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:CodecraftSolution@gmail.com">CodecraftSolution@gmail.com</a>
+            <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:codecraftsolution20@gmail.com">codecraftsolution20@gmail.com</a>
             <i class="fa fa-phone mx-2"></i>
             <a class="navbar-sm-brand text-light text-decoration-none" href="tel:+56 941654821">+56 941-654-821</a>
         </div>
@@ -132,7 +133,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("ImportCsv", "Productos")">Importar Productos</a>
+                            <a class="nav-link" href="@Url.Action("Formulario", "Contacto")">contactanos</a>
                         </li>
                         @if (Context.Session.GetInt32("ClienteId") != null)
                         {

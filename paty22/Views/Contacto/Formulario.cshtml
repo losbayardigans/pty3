@@ -1,0 +1,172 @@
+﻿@model paty22.Models.ContactoModel
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Contacto</title>
+    <link rel="stylesheet" href="~/Content/estilos.css">
+    <script src="https://kit.fontawesome.com/eb496ab1a0.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        h1 {
+            color: #757575;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .container-form {
+            width: 100%;
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 50px;
+            margin-top: 90px;
+        }
+
+            .container-form h2 {
+                margin-bottom: 15px;
+                font-size: 35px;
+            }
+
+            .container-form p {
+                font-size: 17px;
+                line-height: 1.6;
+                margin-bottom: 30px;
+            }
+
+            .container-form a {
+                font-size: 17px;
+                display: inline-block;
+                text-decoration: none;
+                width: 100%;
+                margin-bottom: 15px;
+                color: black;
+                font-weight: 700;
+            }
+
+                .container-form a i {
+                    color: red;
+                    margin-right: 10px;
+                }
+
+            .container-form form .campo, textarea {
+                width: 100%;
+                padding: 15px 10px;
+                font-size: 16px;
+                border: 1px solid #dbdbdb;
+                margin-bottom: 20px;
+                border-radius: 3px;
+                outline: 0px;
+            }
+
+            .container-form form textarea {
+                max-width: 530px;
+                min-width: 530px;
+                min-height: 140px;
+                max-height: 150px;
+            }
+
+            .container-form .btn-enviar {
+                padding: 15px;
+                font-size: 16px;
+                border: none;
+                outline: 0px;
+                background: #757575;
+                color: white;
+                border-radius: 3px;
+                cursor: pointer;
+                transition: all 300ms ease;
+            }
+
+                .container-form .btn-enviar:hover {
+                    background: black;
+                }
+
+        /* Estilos para el mensaje flotante */
+        .mensaje-flotante {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 20px;
+            background-color: bisque;
+            color: black;
+            border-radius: 5px;
+            display: none; /* Inicialmente oculto */
+            z-index: 9999;
+        }
+
+            .mensaje-flotante.error {
+                background-color: #dc3545;
+            }
+    </style>
+</head>
+<body>
+    <div id="mensajeFlotante" class="mensaje-flotante"></div>
+    <div class="container-form">
+        <div class="info-form">
+            <h2>Contáctanos</h2>
+            <p>
+                ¿Necesitas ayuda?<br />
+                Estamos aquí para asistirte. Puedes contactarnos a través de nuestro número de teléfono, enviarnos un correo electrónico o llenando el formulario de contacto. ¡Esperamos tu mensaje!
+            </p>
+            <a href="#"><i class="fa fa-phone"></i> +56 941654891</a>
+            <a href="#"><i class="fa fa-envelope"></i> codecraftsolution20@gmail.com</a>
+            <a href="#"><i class="fa fa-map-marked"></i> Arica,Chile</a>
+        </div>
+
+        @using (Html.BeginForm("Enviar", "Contacto", FormMethod.Post, new { autocomplete = "off" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <!-- Verificación del modelo -->
+            <input type="text" name="nombre" placeholder="Tu Nombre" class="campo" value="@Model?.Nombre" />
+            @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "error" })
+
+            <input type="email" name="email" placeholder="Tu Email" class="campo" value="@Model.Email" />
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "error" })
+
+            <textarea name="mensaje" placeholder="Tu Mensaje...">@Model.Mensaje</textarea>
+            @Html.ValidationMessageFor(m => m.Mensaje, "", new { @class = "error" })
+
+            <input type="submit" name="enviar" value="Enviar Mensaje" class="btn-enviar">
+        }
+    </div>
+    <script>
+        // Función para mostrar el mensaje flotante
+        function mostrarMensajeFlotante(mensaje, esError) {
+            $('#mensajeFlotante').html(mensaje); // Usar .html() en lugar de .text()
+            $('#mensajeFlotante').toggleClass('error', esError); // Agregar clase de error si es necesario
+            $('#mensajeFlotante').fadeIn(); // Mostrar el mensaje flotante
+
+            // Ocultar el mensaje después de 5 segundos
+            setTimeout(function () {
+                $('#mensajeFlotante').fadeOut();
+            }, 5000);
+        }
+
+        // Mostrar mensaje flotante si TempData tiene un mensaje
+        @if (TempData["MensajeExito"] != null)
+        {
+            <text>
+                mostrarMensajeFlotante("@Html.Raw(TempData["MensajeExito"])", false);
+            </text>
+        }
+
+        @if (TempData["MensajeError"] != null)
+        {
+            <text>
+                mostrarMensajeFlotante("@Html.Raw(TempData["MensajeError"])", true);
+            </text>
+        }
+    </script>
+
+</body>
+</html>

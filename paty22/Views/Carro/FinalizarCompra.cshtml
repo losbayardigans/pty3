@@ -3,7 +3,8 @@
 @{
     Layout = "_Layout";  // Si usas un layout, asegúrate de tenerlo bien configurado
 }
-
+<html>
+    <body>
 <div class="boleta-container" style="width: 500px; padding: 20px; border: 1px solid #ccc; font-family: Arial, sans-serif;">
     <h2 style="text-align: center;">Boleta de Compra</h2>
     <p><strong>Cliente:</strong> @Model.Nombre</p>
@@ -46,9 +47,32 @@
     <hr>
     <hr style="border: 1px solid #ccc; margin: 20px 0;">
     <a href="@Url.Action("GenerarPDF", "Pedidos", new { pedidoId = Model.Pedido.Id  })" class="btn btn-primary">Descargar PDF</a>
-
+    <button type="button" onclick="enviarPorCorreo()" class="btn btn-primary">
+        Enviar por Correo
+    </button>
     <footer style="text-align: center; padding-top: 20px;">
         <p>¡Gracias por tu compra!</p>
     </footer>
 </div>
+<script>
+    function enviarPorCorreo() {
+        // Realizar una solicitud POST para enviar el correo
+        var pedidoId = @Model.Pedido.Id; // Asumiendo que el ID del pedido está disponible en el modelo
 
+        // Usar fetch para llamar a la acción del controlador que enviará el correo
+        fetch(`/Pedidos/EnviarPorCorreo/${pedidoId}`, {
+            method: 'POST'
+        })
+            .then(response => response.blob())
+            .then(data => {
+                // Opcional: manejar la respuesta, como mostrar un mensaje de éxito
+                alert("El PDF ha sido enviado por correo correctamente.");
+            })
+            .catch(error => {
+                // Manejar error en caso de que algo falle
+                alert("Hubo un problema al enviar el correo.");
+            });
+    }
+</script>
+</body>
+</html>

@@ -1,19 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using paty22.Models;
+using paty22.Services;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using MailKit.Net.Smtp;
+using MimeKit;
+
 
 namespace paty22.Controllers
 {
     public class PedidosController : Controller
     {
         private readonly ProyectoFinalContext _context;
-
-        public PedidosController(ProyectoFinalContext context)
+        private readonly SmtpSettings _smtpSettings;
+        public PedidosController(ProyectoFinalContext context, IOptions<SmtpSettings> smtpSettings)
         {
             _context = context;
+            _smtpSettings = smtpSettings.Value;
         }
 
         public IActionResult GenerarPDF(int pedidoId)
@@ -21,18 +27,15 @@ namespace paty22.Controllers
             // Obtener los datos del pedido desde la base de datos
             var pedido = _context.Pedidos
                 .Include(p => p.PedidoProductos)
-
-                    .ThenInclude(pp => pp.Producto)
-                    .Include(p => p.Cliente)
-                .Where(p => p.Id == pedidoId)
-                .FirstOrDefault();
+                .ThenInclude(pp => pp.Producto)
+                .Include(p => p.Cliente)
+                .FirstOrDefault(p => p.Id == pedidoId);
 
             if (pedido == null)
             {
                 return NotFound(); // Si no se encuentra el pedido, devolver error.
             }
 
-            // Crear el HTML del contenido del PDF
             // Crear el HTML del contenido del PDF
             var htmlContent = @"
     <html>
@@ -112,7 +115,6 @@ namespace paty22.Controllers
         </body>
     </html>";
 
-
             // Guardar el contenido HTML en un archivo temporal
             var htmlFilePath = Path.Combine(Path.GetTempPath(), "temp.html");
             System.IO.File.WriteAllText(htmlFilePath, htmlContent, Encoding.UTF8);
@@ -143,8 +145,51 @@ namespace paty22.Controllers
                 return StatusCode(500, "Error al generar el PDF.");
             }
 
-            // Devolver el archivo PDF generado
-            return File(System.IO.File.ReadAllBytes(pdfFilePath), "application/pdf", $"Pedido_{pedidoId}.pdf");
+            // Enviar el PDF como archivo al cliente
+            var pdfBytes = System.IO.File.ReadAllBytes(pdfFilePath);
+            var fileContentResult = File(pdfBytes, "application/pdf", $"Pedido_{pedidoId}.pdf");
+
+            // Crear el mensaje de correo
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("usuario", "codecraftsolution20@gmail.com"));
+            message.To.Add(new MailboxAddress("Cliente", pedido.Cliente.Email)); // Cambia por el email del cliente
+            message.Subject = "Boleta de Compra - Pedido #" + pedidoId;
+            message.Body = new TextPart("plain") { Text = $"Se adjunta el PDF del pedido #{pedidoId} realizado el {DateTime.Now:dd/MM/yyyy}." };
+
+            // Crear el adjunto (PDF)
+            var attachment = new MimePart("application", "pdf")
+            {
+                Content = new MimeContent(new MemoryStream(pdfBytes)), // Cargar el archivo PDF desde la memoria
+                ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                FileName = $"Pedido_{pedidoId}.pdf"
+            };
+
+            // Crear el multipart con el adjunto
+            var multipart = new Multipart("mixed")
+    {
+        message.Body,
+        attachment
+    };
+
+            message.Body = multipart;
+
+            // Enviar el correo
+            var client = new SmtpClient();
+            client.Connect(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            client.Authenticate(_smtpSettings.User, _smtpSettings.Password);
+            client.Send(message);
+            client.Disconnect(true);
+
+            // Eliminar el archivo temporal después de enviarlo
+            System.IO.File.Delete(pdfFilePath);
+
+            // Devolver el archivo PDF al cliente como descarga
+            return fileContentResult;
         }
+
+
+
+       
+
     }
 }

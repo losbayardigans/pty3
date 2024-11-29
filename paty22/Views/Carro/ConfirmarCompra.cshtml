@@ -18,40 +18,192 @@
         </div>
 }
 
+
+@{
+    ViewData["Title"] = "Confirmar Pedido";
+}
+
+<style>
+    /* Estilo general */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4; /* Gris claro */
+        color: #333; /* Gris oscuro */
+        min-height: 100vh; /* Asegura que ocupe toda la altura de la pantalla */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #ffffff; /* Blanco */
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        flex-grow: 1; /* Ocupa el espacio disponible */
+    }
+
+    h3, h4 {
+        color: #333; /* Gris oscuro */
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    p {
+        color: #666; /* Gris medio */
+    }
+
+    /* Tabla de productos */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+        .table th, .table td {
+            text-align: left;
+            padding: 15px;
+            border: 1px solid #ddd; /* Gris claro */
+        }
+
+        .table th {
+            background-color: #f7f7f7; /* Gris muy claro */
+            color: #333; /* Gris oscuro */
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #fafafa; /* Gris muy claro */
+        }
+
+        .table tbody tr:hover {
+            background-color: #f0f0f0; /* Gris claro */
+        }
+
+    /* Formularios */
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #333; /* Gris oscuro */
+        margin-bottom: 5px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc; /* Gris medio */
+        border-radius: 5px;
+        font-size: 1rem;
+        color: #333; /* Gris oscuro */
+        background-color: #f9f9f9; /* Gris muy claro */
+        transition: border-color 0.3s ease;
+    }
+
+        input:focus, select:focus {
+            border-color: #000; /* Negro */
+            outline: none;
+        }
+
+        input[disabled] {
+            background-color: #e9ecef; /* Gris muy claro */
+            color: #6c757d; /* Gris claro */
+            cursor: not-allowed;
+        }
+
+    /* Botones */
+    .btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        color: #fff; /* Blanco */
+        background-color: #333; /* Gris oscuro */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn:hover {
+            background-color: #555; /* Gris medio */
+        }
+
+    /* Alertas */
+    .alert {
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da; /* Rosa muy claro */
+        color: #721c24; /* Rojo */
+        border: 1px solid #f5c6cb; /* Rosa claro */
+    }
+
+    .alert-success {
+        background-color: #d4edda; /* Verde claro */
+        color: #155724; /* Verde oscuro */
+        border: 1px solid #c3e6cb; /* Verde más claro */
+    }
+</style>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
 <!-- Detalles del pedido -->
-<div>
+<div class="container">
     <h3>Detalles de tu Pedido</h3>
     @if (Model.PedidoProductos != null && Model.PedidoProductos.Any())
     {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio Unitario</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
                 @foreach (var pedidoProducto in Model.PedidoProductos)
                 {
-                            <tr>
-                                <td>@pedidoProducto.Producto.Nombre</td>
-                                <td>@pedidoProducto.Cantidad</td>
-                                <td>@pedidoProducto.Producto.Precio.ToString("C")</td>
-                                      <td>@(pedidoProducto.Cantidad * pedidoProducto.Producto.Precio)</td>
-                                
-                            </tr>
+                    <tr>
+                        <td>@pedidoProducto.Producto.Nombre</td>
+                        <td>@pedidoProducto.Cantidad</td>
+                        <td>@pedidoProducto.Producto.Precio.ToString("C", new System.Globalization.CultureInfo("es-CL"))</td>
+                        <td>@(pedidoProducto.Cantidad * pedidoProducto.Producto.Precio)</td>
+                    </tr>
                 }
-                </tbody>
-            </table>
+            </tbody>
+        </table>
     }
     else
     {
-            <p>No hay productos en el pedido.</p>
+        <p>No hay productos en el pedido.</p>
     }
 
-    <h4>Total a Pagar: @ViewBag.Total.ToString("C")</h4>
+    <h4>Total a Pagar: @ViewBag.Total.ToString("C", new System.Globalization.CultureInfo("es-CL"))</h4>
 </div>
 
 <!-- Detalles de cliente -->
@@ -71,22 +223,25 @@
     </div>
 
     <!-- Formulario de pago -->
-    <label for="PagoMetodo">Método de Pago:</label>
-    @Html.DropDownListFor(
-                    model => model.Pago.MetodoPago,
-                    new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Tarjeta", Value = "Tarjeta" },
-                new SelectListItem { Text = "Efectivo", Value = "Efectivo" },
-                new SelectListItem { Text = "PayPal", Value = "PayPal" }
-            },
-                    "Seleccione un método de pago",
-                    new { @class = "form-control" }
-            )
+    <div class="form-group">
+        <label for="PagoMetodo">Método de Pago:</label>
+        @Html.DropDownListFor(
+                 model => model.Pago.MetodoPago,
+                 new List<SelectListItem>
+        {
+        new SelectListItem { Text = "Tarjeta", Value = "Tarjeta" },
+        new SelectListItem { Text = "Efectivo", Value = "Efectivo" },
+        new SelectListItem { Text = "PayPal", Value = "PayPal" }
+        },
+                 "Seleccione un método de pago",
+                 new { @class = "form-control" }
+                 )
+    </div>
 
     <div class="form-group">
-        <label for="PagoMonto"> total:</label>
-        <input type="text" class="form-control" id="PagoMonto" name="Pago.Monto" value=" @ViewBag.Total.ToString("C")" disabled />
+        <label for="PagoMonto">Total:</label>
+        <input type="text" class="form-control" id="PagoMonto" name="Pago.Monto"
+               value="@ViewBag.Total.ToString("C", new System.Globalization.CultureInfo("es-CL"))" disabled />
     </div>
 
     <button type="submit" class="btn btn-primary">Confirmar Compra</button>
