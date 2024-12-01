@@ -243,33 +243,38 @@
             }
         </div>
     </div>
-    <button id="verFavoritos">Ver Favoritos</button>
+  
 
 
-    <div>Favoritos: <span id="contadorFavoritos">0</span></div>
+   
 
     <ul class="pagination" id="pagination"></ul>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const favoritos = new Set(JSON.parse(localStorage.getItem('favoritos')) || []);
-
-                
             const botonesFavorito = document.querySelectorAll('.btn-favorito');
             const productosContainer = document.getElementById('productosContainer');
             const paginationContainer = document.getElementById('pagination');
             const searchInput = document.getElementById('searchInput');
-            const contadorFavoritos = document.getElementById('contadorFavoritos');
 
-            
             const productosPorPagina = 8;
             let paginaActual = 1;
 
-            
             let productosFiltrados = Array.from(document.querySelectorAll('.producto'));
             let precioSeleccionado = 'all';
             let categoriaSeleccionada = 'all';
 
-        
+            function actualizarFavorito(boton, productoId) {
+                const corazon = boton.querySelector('i');
+                if (favoritos.has(productoId)) {
+                    corazon.classList.remove('far', 'fa-heart');
+                    corazon.classList.add('fas', 'fa-heart');
+                } else {
+                    corazon.classList.remove('fas', 'fa-heart');
+                    corazon.classList.add('far', 'fa-heart');
+                }
+            }
+
             function mostrarPagina(pagina) {
                 const inicio = (pagina - 1) * productosPorPagina;
                 const fin = inicio + productosPorPagina;
@@ -281,7 +286,6 @@
                 generarPaginacion();
             }
 
-            
             function generarPaginacion() {
                 const totalPaginas = Math.ceil(productosFiltrados.length / productosPorPagina);
                 paginationContainer.innerHTML = '';
@@ -303,65 +307,6 @@
                     paginationContainer.appendChild(pageItem);
                 }
             }
-
-            
-            function actualizarFavorito(boton, productoId) {
-                const corazon = boton.querySelector('i');
-                if (favoritos.has(productoId)) {
-                    corazon.classList.remove('far', 'fa-heart');
-                    corazon.classList.add('fas', 'fa-heart');
-                } else {
-                    corazon.classList.remove('fas', 'fa-heart');
-                    corazon.classList.add('far', 'fa-heart');
-                }
-
-                contadorFavoritos.textContent = favoritos.size;
-            }
-
-            
-            botonesFavorito.forEach(boton => {
-                const productoId = parseInt(boton.getAttribute('data-id'));
-
-               
-                actualizarFavorito(boton, productoId);
-
-                boton.addEventListener('click', () => {
-                    if (favoritos.has(productoId)) {
-                        favoritos.delete(productoId);
-                    } else {
-                        favoritos.add(productoId);
-                    }
-
-                    
-                    localStorage.setItem('favoritos', JSON.stringify(Array.from(favoritos)));
-
-                 
-                    actualizarFavorito(boton, productoId);
-                });
-            });
-
-            // Filtros y búsqueda
-            document.querySelectorAll('#priceFilters li').forEach(filter => {
-                filter.addEventListener('click', () => {
-                    document.querySelectorAll('#priceFilters li').forEach(f => f.classList.remove('active'));
-                    filter.classList.add('active');
-                    precioSeleccionado = filter.getAttribute('data-price');
-                    filtrarProductos();
-                });
-            });
-
-            document.querySelectorAll('#categoryFilters li').forEach(filter => {
-                filter.addEventListener('click', () => {
-                    document.querySelectorAll('#categoryFilters li').forEach(f => f.classList.remove('active'));
-                    filter.classList.add('active');
-                    categoriaSeleccionada = filter.getAttribute('data-category');
-                    filtrarProductos();
-                });
-            });
-
-            searchInput.addEventListener('input', () => {
-                filtrarProductos();
-            });
 
             function filtrarProductos() {
                 productosFiltrados = Array.from(document.querySelectorAll('.producto')).filter(producto => {
@@ -393,31 +338,49 @@
                 mostrarPagina(paginaActual);
             }
 
-           
-            document.getElementById('verFavoritos').addEventListener('click', (e) => {
-                e.preventDefault();
+            botonesFavorito.forEach(boton => {
+                const productoId = parseInt(boton.getAttribute('data-id'));
 
-                const favoritosArray = Array.from(favoritos);
+                actualizarFavorito(boton, productoId);
 
-                axios.post('/Productos/Favoritos', favoritosArray)
-                    .then(response => {
-                        if (response.status === 200) {
-                            window.location.href = '/Productos/Favoritos';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error al enviar los favoritos:', error);
-                    });
-                console.log(favoritosArray); // Verifica que es un arreglo de IDs
+                boton.addEventListener('click', () => {
+                    if (favoritos.has(productoId)) {
+                        favoritos.delete(productoId);
+                    } else {
+                        favoritos.add(productoId);
+                    }
 
+                    localStorage.setItem('favoritos', JSON.stringify(Array.from(favoritos)));
+                    actualizarFavorito(boton, productoId);
+                });
             });
 
+            document.querySelectorAll('#priceFilters li').forEach(filter => {
+                filter.addEventListener('click', () => {
+                    document.querySelectorAll('#priceFilters li').forEach(f => f.classList.remove('active'));
+                    filter.classList.add('active');
+                    precioSeleccionado = filter.getAttribute('data-price');
+                    filtrarProductos();
+                });
+            });
 
-            // Inicializar la vista
-            contadorFavoritos.textContent = favoritos.size;
+            document.querySelectorAll('#categoryFilters li').forEach(filter => {
+                filter.addEventListener('click', () => {
+                    document.querySelectorAll('#categoryFilters li').forEach(f => f.classList.remove('active'));
+                    filter.classList.add('active');
+                    categoriaSeleccionada = filter.getAttribute('data-category');
+                    filtrarProductos();
+                });
+            });
+
+            searchInput.addEventListener('input', () => {
+                filtrarProductos();
+            });
+
             mostrarPagina(paginaActual);
         });
     </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
