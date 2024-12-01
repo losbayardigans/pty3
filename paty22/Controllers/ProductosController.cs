@@ -6,6 +6,7 @@ using System.Globalization;
 using CsvHelper;
 using System.Text;
 using System.Linq;
+using paty22.Extensions;
 
 public class ProductosController : Controller
 {
@@ -23,14 +24,36 @@ public class ProductosController : Controller
           .Include(p => p.Etiqueta)
           .GroupBy(p => p.Id)
           .Select(g => g.FirstOrDefault())
-          .Take(20) // Limitar a 20 productos
+          .Take(19) // Limitar a 20 productos
           .ToList();
 
         var categorias = _context.Categorias.ToList();
         ViewData["Categorias"] = categorias;
         return View(productos);
     }
+    public IActionResult Favoritos()
+    {
+        return View();
+    }
+    [HttpPost]
+    public IActionResult Favoritos([FromBody] List<int> favoritosIds)
+    {
+        if (favoritosIds == null || !favoritosIds.Any())
+        {
+            return RedirectToAction("Index");
+        }
 
+        // Busca los productos en la base de datos usando los IDs
+        var productosFavoritos = _context.Productos
+            .Where(p => favoritosIds.Contains(p.Id))
+            .ToList();
+
+        // Pasar los productos favoritos a la vista
+        return View(productosFavoritos);
+    }
+
+
+ 
     public IActionResult ImportCsv()
     {
         return View();

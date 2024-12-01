@@ -1,0 +1,27 @@
+﻿@model IEnumerable<paty22.Models.Producto>
+
+<html>
+<head>
+    <title>Favoritos</title>
+</head>
+<body>
+    <h1>Tus Productos Favoritos</h1>
+    <div class="productos-container">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var producto in Model)
+            {
+                <div class="producto">
+                    <img src="@Url.Content(producto.ImageUrl ?? "/img/logo1.jpg")" alt="@producto.Nombre">
+                    <h2>@producto.Nombre</h2>
+                    <p>@String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C0}", producto.Precio)</p>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No tienes productos favoritos.</p>
+        }
+    </div>
+</body>
+</html>

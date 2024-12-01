@@ -271,7 +271,8 @@ public class CarroController : Controller
             {
                 PedidoId = pedido.Id,
                 MetodoPago = viewModel.Pago.MetodoPago,
-                EstadoPago = "Pendiente",
+                EstadoPago = "Pagado",
+
                 FechaPago = DateTime.Now
             };
 

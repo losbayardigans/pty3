@@ -1,78 +1,169 @@
 ﻿@model paty22.Models.PedidoPagoViewModel
 
 @{
-    Layout = "_Layout";  // Si usas un layout, asegúrate de tenerlo bien configurado
+    Layout = "_Layout";  // Asegúrate de tener configurado el layout si lo usas
 }
 <html>
-    <body>
-<div class="boleta-container" style="width: 500px; padding: 20px; border: 1px solid #ccc; font-family: Arial, sans-serif;">
-    <h2 style="text-align: center;">Boleta de Compra</h2>
-    <p><strong>Cliente:</strong> @Model.Nombre</p>
-    <p><strong>Teléfono:</strong> @Model.Telefono</p>
-    <p><strong>Dirección:</strong> @Model.Direccion</p>
+<head>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
 
-    <hr>
+        .boleta-container {
+            width: 600px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    <h3>Productos Comprados:</h3>
-    <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr>
-                <th style="text-align: left; padding: 5px; border-bottom: 1px solid #ccc;">Producto</th>
-                <th style="text-align: left; padding: 5px; border-bottom: 1px solid #ccc;">Cantidad</th>
-                <th style="text-align: left; padding: 5px; border-bottom: 1px solid #ccc;">Precio</th>
-                <th style="text-align: left; padding: 5px; border-bottom: 1px solid #ccc;">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.PedidoProductos)
-            {
-                <tr>
-                    <td style="padding: 5px; border-bottom: 1px solid #eee;">@item.Producto.Nombre</td>
-                    <td style="padding: 5px; border-bottom: 1px solid #eee;">@item.Cantidad</td>
-                    <td style="padding: 5px; border-bottom: 1px solid #eee;">@String.Format("{0:C}", item.Producto.Precio)</td>
-                    <td style="padding: 5px; border-bottom: 1px solid #eee;">@String.Format("{0:C}", item.Cantidad * item.Producto.Precio)</td>
-                </tr>
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        hr {
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+            color: #555;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        th {
+            font-weight: normal;
+            background-color: #f8f8f8;
+        }
+
+        /* Total a pagar */
+        .total-container {
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Detalles de Pago */
+        .payment-details {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* Botón de descarga */
+        .btn-pdf {
+            text-decoration: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            background-color: #5a5a5a;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+            .btn-pdf:hover {
+                background-color: #333;
             }
-        </tbody>
-    </table>
+    </style>
+</head>
+<body>
+    <div class="boleta-container">
+        <h2>Boleta de Compra</h2>
 
-    <hr>
+        <!-- Información del cliente -->
+        <div>
+            <p><strong>Cliente:</strong> @Model.Nombre</p>
+            <p><strong>Teléfono:</strong> @Model.Telefono</p>
+            <p><strong>Dirección:</strong> @Model.Direccion</p>
+        </div>
 
-    <h3>Total a Pagar:</h3>
-    <p><strong>Total:</strong> @String.Format("{0:C}", Model.Total)</p>
+        <hr>
 
-    <p><strong>Estado de Pago:</strong> @Model.Pago.EstadoPago</p>
-    <p><strong>Fecha de Pago:</strong> @Model.Pago.FechaPago.ToString("dd/MM/yyyy HH:mm")</p>
+        <!-- Tabla de productos -->
+        <h3>Productos Comprados</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PedidoProductos)
+                {
+                    <tr>
+                        <td>@item.Producto.Nombre</td>
+                        <td>@item.Cantidad</td>
+                        <td>@String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", item.Producto.Precio)
+</td>
+                        <td>
+                            @String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}",item.Cantidad * item.Producto.Precio)
+                        </td>
+                    </tr>
+                }
 
-    <hr>
-    <hr style="border: 1px solid #ccc; margin: 20px 0;">
-    <a href="@Url.Action("GenerarPDF", "Pedidos", new { pedidoId = Model.Pedido.Id  })" class="btn btn-primary">Descargar PDF</a>
-    <button type="button" onclick="enviarPorCorreo()" class="btn btn-primary">
-        Enviar por Correo
-    </button>
-    <footer style="text-align: center; padding-top: 20px;">
-        <p>¡Gracias por tu compra!</p>
-    </footer>
-</div>
-<script>
-    function enviarPorCorreo() {
-        // Realizar una solicitud POST para enviar el correo
-        var pedidoId = @Model.Pedido.Id; // Asumiendo que el ID del pedido está disponible en el modelo
+            </tbody>
+        </table>
 
-        // Usar fetch para llamar a la acción del controlador que enviará el correo
-        fetch(`/Pedidos/EnviarPorCorreo/${pedidoId}`, {
-            method: 'POST'
-        })
-            .then(response => response.blob())
-            .then(data => {
-                // Opcional: manejar la respuesta, como mostrar un mensaje de éxito
-                alert("El PDF ha sido enviado por correo correctamente.");
-            })
-            .catch(error => {
-                // Manejar error en caso de que algo falle
-                alert("Hubo un problema al enviar el correo.");
-            });
-    }
-</script>
+        <hr>
+
+        <!-- Total a Pagar -->
+       
+
+        <!-- Detalles de Pago -->
+        <div class="payment-details">
+            <p><strong>Estado de Pago:</strong> @Model.Pago.EstadoPago</p>
+            <p><strong>Fecha de Pago:</strong> @Model.Pago.FechaPago.ToString("dd/MM/yyyy HH:mm")</p>
+        </div>
+
+        <hr>
+
+        <!-- Botón para descargar PDF -->
+        <div style="text-align: center;">
+            <a href="@Url.Action("GenerarPDF", "Pedidos", new { pedidoId = Model.Pedido.Id })" class="btn-pdf">
+                Descargar PDF
+            </a>
+        </div>
+    </div>
 </body>
 </html>

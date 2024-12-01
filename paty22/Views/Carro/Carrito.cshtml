@@ -2,25 +2,28 @@
 @{
     ViewData["Title"] = "Carrito de Compras";
 }
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
 
 <style>
     body {
-        background-color: #f8f9fa; /* Fondo gris claro */
+        background-color: #f8f9fa; 
         font-family: Arial, sans-serif;
     }
 
     .carrito-container {
-        max-width: 800px; /* Ancho del contenido */
-        margin: 20px auto; /* Centrado */
-        background-color: #ffffff; /* Fondo blanco */
+        max-width: 800px; 
+        margin: 20px auto; 
+        background-color: #ffffff; 
         padding: 20px;
-        border-radius: 10px; /* Bordes redondeados */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        border-radius: 10px; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
     }
 
     h2 {
         text-align: center;
-        color: #333333; /* Gris oscuro */
+        color: #333333; 
         font-size: 1.8rem;
     }
 
@@ -33,17 +36,17 @@
         .table th, .table td {
             text-align: center;
             padding: 10px;
-            border-bottom: 1px solid #cccccc; /* Separadores grises */
+            border-bottom: 1px solid #cccccc; 
         }
 
         .table th {
-            background-color: #f2f2f2; /* Fondo claro */
+            background-color: #f2f2f2; 
             font-weight: bold;
-            color: #555555; /* Gris medio */
+            color: #555555; 
         }
 
         .table td {
-            color: #333333; /* Gris oscuro */
+            color: #333333; 
         }
 
     .btn {
@@ -53,32 +56,32 @@
     }
 
     .btn-primary {
-        background-color: #333333; /* Gris oscuro */
+        background-color: #333333; 
         color: #ffffff;
         border: none;
     }
 
         .btn-primary:hover {
-            background-color: #555555; /* Gris medio */
+            background-color: #555555; 
         }
 
     .btn-danger {
-        background-color: #ff4d4d; /* Rojo claro */
+        background-color: #ff4d4d; 
         color: #ffffff;
         border: none;
     }
 
         .btn-danger:hover {
-            background-color: #cc0000; /* Rojo intenso */
+            background-color: #cc0000; 
         }
 
     .btn-secondary {
-        background-color: #dddddd; /* Gris claro */
+        background-color: #dddddd; 
         color: #333333;
     }
 
     .btn-warning {
-        background-color: #f0ad4e; /* Naranja suave */
+        background-color: #f0ad4e; 
         color: #ffffff;
     }
 
@@ -86,15 +89,60 @@
         text-align: right;
         margin-top: 20px;
         font-size: 1.2rem;
-        color: #333333; /* Gris oscuro */
+        color: #333333; 
     }
 
     .empty-cart {
         text-align: center;
         font-size: 1rem;
-        color: #777777; /* Gris claro */
+        color: #777777; 
         margin-top: 20px;
     }
+   
+    .btn-eliminar {
+        background: none;
+        border: none;
+        color: #d9534f; 
+        font-size: 20px;
+        cursor: pointer; 
+        transition: transform 0.3s ease, color 0.3s ease; 
+        padding: 5px; 
+    }
+
+        
+        .btn-eliminar:hover {
+            color: #c9302c; 
+            transform: scale(1.2); 
+        }
+
+        
+        .btn-eliminar i {
+            font-size: 20px; 
+            vertical-align: middle; 
+        }
+  
+    .btn-modificar {
+        background: none;
+        border: none;
+        color: #007bff; 
+        font-size: 18px; 
+        cursor: pointer;
+        padding: 5px;
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+        
+        .btn-modificar:hover {
+            color: #0056b3; 
+            transform: scale(1.2); 
+        }
+
+        .btn-modificar i {
+            font-size: 18px; 
+            vertical-align: middle; 
+        }
+
+
 </style>
 
 <div class="carrito-container">
@@ -132,20 +180,27 @@
                     <tr>
                         <td>@item.Producto.Nombre</td>
                         <td>@item.Producto.Precio.ToString("C", new System.Globalization.CultureInfo("es-CL"))
-</td>
+                        </td>
                         <td>
                             <form method="post" action="@Url.Action("ModificarCantidad", "Carro")" style="display: inline-block;">
                                 <input type="hidden" name="productoId" value="@item.ProductoId" />
                                 <input type="number" name="cantidad" value="@item.Cantidad" min="1" class="form-control" style="width: 70px; display: inline-block;" />
-                                <button type="submit" class="btn btn-primary btn-sm">Modificar</button>
+                                <button type="submit" class="btn-modificar">
+                                    <i class="fas fa-pencil-alt"></i> 
+                                </button>
                             </form>
                         </td>
+
                         <td>@((item.Producto.Precio * item.Cantidad).ToString("N0"))</td>
                         <td>
                             <form method="post" action="@Url.Action("EliminarDelCarrito", "Carro")">
                                 <input type="hidden" name="carroId" value="@item.Id" />
-                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                <button type="submit" class="btn-eliminar">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </form>
+
+
                         </td>
                     </tr>
                 }

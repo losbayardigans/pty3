@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Configuración de la base de datos MySQL
+// Necesario para acceder a la sesiónción de la base de datos MySQL
 builder.Services.AddDbContext<ProyectoFinalContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("Connection"),

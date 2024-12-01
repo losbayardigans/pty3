@@ -133,6 +133,9 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                        <a href="/Productos/Favoritos">Mis Favoritos</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="@Url.Action("Formulario", "Contacto")">contactanos</a>
                         </li>
                         @if (Context.Session.GetInt32("ClienteId") != null)
@@ -141,16 +144,22 @@
                                 <span class="nav-link">Hola, @Context.Session.GetString("NombreCliente")</span>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Logout", "Clientes")">Cerrar sesión</a>
+                                <a class="nav-link" href="@Url.Action("Logout", "Clientes")" data-toggle="tooltip" title="Cerarr Sesion">
+                                    <i class="fas fa-sign-out-alt"></i> 
+                                </a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Register", "Clientes")">Registrar</a>
+                                <a class="nav-link" href="@Url.Action("Register", "Clientes")" data-toggle="tooltip" title="Registrar">
+                                    <i class="fas fa-user-plus"></i> 
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Login", "Clientes")">Login</a>
+                                <a class="nav-link" href="@Url.Action("Login", "Clientes")"data-toggle="tooltip" title="Iniciar sesión">
+                                    <i class="fas fa-sign-in-alt"></i> 
+                                </a>
                             </li>
                         }
                     </ul>
@@ -158,32 +167,82 @@
             </div>
         </nav>
     </header>
-   
 
-    <div class="container">
+
+    <div class="wrapper">
+        <!-- Contenido principal -->
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
-    </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <footer class="footer">
-        <div class="container">
-            &copy; 2024 Paty | <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
-        </div>
-    </footer>
 
+        <!-- Pie de página -->
+        <footer class="footer">
+            <div class="container">
+                &copy; 2024 Paty | <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+            </div>
+        </footer>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Activar tooltips de Bootstrap
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
 
-   
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const favoritosBtn = document.getElementById('favoritosBtn');
+            const favoritosModal = new bootstrap.Modal(document.getElementById('favoritosModal'));
+            const favoritosList = document.getElementById('favoritosList');
+            const favoritos = new Set(JSON.parse(localStorage.getItem('favoritos')) || []); // Usar localStorage para los favoritos
+
+            // Mostrar los productos favoritos en el modal
+            favoritosBtn.addEventListener('click', () => {
+                favoritosList.innerHTML = ''; // Limpiar la lista de productos favoritos
+                if (favoritos.size === 0) {
+                    favoritosList.innerHTML = '<p>No tienes productos favoritos.</p>';
+                } else {
+                    // Aquí obtenemos los productos favoritos y los mostramos
+                    const productosFavoritos = Array.from(favoritos);
+                    productosFavoritos.forEach(productoId => {
+                        // Buscar el producto por ID (esto depende de cómo tengas los productos en tu página)
+                        const producto = document.querySelector(`.producto[data-id="${productoId}"]`);
+                        if (producto) {
+                            const productoNombre = producto.getAttribute('data-name');
+                            const productoPrecio = producto.getAttribute('data-price');
+                            const productoImagen = producto.querySelector('img').getAttribute('src');
+
+                            // Crear el elemento para mostrar el producto favorito
+                            const productoElemento = document.createElement('div');
+                            productoElemento.classList.add('producto-favorito');
+                            productoElemento.innerHTML = `
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <img src="${productoImagen}" alt="${productoNombre}" class="img-fluid">
+                                            </div>
+                                            <div class="col-8">
+                                                <h5>${productoNombre}</h5>
+                                                <p>$${productoPrecio}</p>
+                                            </div>
+                                        </div>
+                                    `;
+                            favoritosList.appendChild(productoElemento);
+                        }
+                    });
+                }
+
+                // Abrir el modal de favoritos
+                favoritosModal.show();
+            });
+        });
+    </script>
   
     <script src="@Url.Content("~/js/templatemo.js")"></script>
     @await RenderSectionAsync("Scripts", required: false)
