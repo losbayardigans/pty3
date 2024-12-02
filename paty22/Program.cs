@@ -27,9 +27,12 @@ builder.Services.AddTransient<EmailService>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.Name = ".MyApp.Session";
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // Si tu app no está usando HTTPS
+
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
 
