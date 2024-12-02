@@ -187,7 +187,7 @@ public class CarroController : Controller
         return View(viewModel);
     }
 
-   
+
     [HttpPost]
     public async Task<IActionResult> ConfirmarCompra(PedidoPagoViewModel viewModel)
     {
@@ -206,10 +206,10 @@ public class CarroController : Controller
                 return RedirectToAction("Carrito");
             }
 
-            // actualizamos la direccion que el usuario ah ingresado en el formulario gaa
+            // actualizamos la direccion que el usuario ha ingresado en el formulario
             if (!string.IsNullOrEmpty(viewModel.Direccion) ||
-       !string.IsNullOrEmpty(viewModel.Telefono) ||
-       !string.IsNullOrEmpty(viewModel.Nombre))
+                !string.IsNullOrEmpty(viewModel.Telefono) ||
+                !string.IsNullOrEmpty(viewModel.Nombre))
             {
                 if (!string.IsNullOrEmpty(viewModel.Direccion))
                 {
@@ -226,13 +226,32 @@ public class CarroController : Controller
                     cliente.Nombre = viewModel.Nombre;
                 }
 
+                // Si se ha seleccionado el método de pago "Tarjeta", guardamos los datos de la tarjeta
+                if (viewModel.Pago.MetodoPago == "Tarjeta")
+                {
+                    if (string.IsNullOrEmpty(viewModel.NumeroTarjeta) ||
+                        string.IsNullOrEmpty(viewModel.FechaExpiracion) ||
+                        string.IsNullOrEmpty(viewModel.Cvv))
+                    {
+                        TempData["ErrorMessage"] = "Debe proporcionar todos los detalles de la tarjeta.";
+                        return RedirectToAction("Carrito");
+                    }
+
+                    // Guardamos los detalles de la tarjeta en el cliente
+                    cliente.NumeroTarjeta = viewModel.NumeroTarjeta;
+                    cliente.FechaExpiracion = viewModel.FechaExpiracion;
+                    cliente.Cvv = viewModel.Cvv;
+
+                    _context.Clientes.Update(cliente);
+                    await _context.SaveChangesAsync();
+                }
+
                 // Actualiza el cliente en la base de datos
                 _context.Clientes.Update(cliente);
                 await _context.SaveChangesAsync();
             }
 
             // Crea el pedido
-            // Crear el pedido
             var pedido = new Pedido
             {
                 ClienteId = clienteId,
@@ -242,10 +261,10 @@ public class CarroController : Controller
             };
 
             _context.Pedidos.Add(pedido);
-            await _context.SaveChangesAsync(); //guardamos cambios 
+            await _context.SaveChangesAsync(); // guardamos cambios 
             TempData["PedidoId"] = pedido.Id; // guardamos el id para poder verificarlog
 
-            // ahora que existe el id agrega los valores ala nueva tabla pedidoprdoucto
+            // ahora que existe el id agrega los valores a la nueva tabla PedidoProducto
             var carrito = _context.Carros
                 .Where(c => c.ClienteId == clienteId)
                 .Include(c => c.Producto)
@@ -255,30 +274,29 @@ public class CarroController : Controller
             {
                 var pedidoProducto = new PedidoProducto
                 {
-                    PedidoId = pedido.Id, //asociamos el nuevo id 
+                    PedidoId = pedido.Id, // asociamos el nuevo id 
                     ProductoId = carro.ProductoId, // tenemos el id del carro 
-                    Cantidad = carro.Cantidad // los productos que tiene en l carro 
+                    Cantidad = carro.Cantidad // los productos que tiene en el carro 
                 };
 
                 _context.PedidoProductos.Add(pedidoProducto);
             }
 
-            await _context.SaveChangesAsync(); // si todo esta bien guardamos cambios 
-            TempData["PedidoProductos"] = carrito.Count; // guardamos la cantidad de producros 
+            await _context.SaveChangesAsync(); // si todo está bien guardamos cambios 
+            TempData["PedidoProductos"] = carrito.Count; // guardamos la cantidad de productos 
 
-            // creamos y luego guardamos el pago ojo que el pago es simulado noma xd
+            // creamos y luego guardamos el pago (ojo que el pago es simulado, pero aquí guardamos el método de pago)
             var pago = new Pago
             {
                 PedidoId = pedido.Id,
                 MetodoPago = viewModel.Pago.MetodoPago,
-                EstadoPago = "Pagado",
-
+                EstadoPago = "Pagado",  // Simulación de pago
                 FechaPago = DateTime.Now
             };
 
             _context.Pagos.Add(pago);
             await _context.SaveChangesAsync();
-            TempData["PagoEstado"] = pago.EstadoPago; //guardamos el estado de pago para verificarlo 
+            TempData["PagoEstado"] = pago.EstadoPago; // guardamos el estado de pago para verificarlo 
 
             // Limpiar el carrito después de la compra
             var carritoCliente = _context.Carros.Where(c => c.ClienteId == clienteId).ToList();
@@ -295,7 +313,8 @@ public class CarroController : Controller
         }
     }
 
-//esto muestra la vista del pedido 
+
+    //esto muestra la vista del pedido 
     public IActionResult FinalizarCompra(int id)
 {
     var pedido = _context.Pedidos

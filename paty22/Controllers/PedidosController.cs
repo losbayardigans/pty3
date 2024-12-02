@@ -131,16 +131,23 @@ namespace paty22.Controllers
                     htmlContent += @"
                     <div class='payment-status'>
                         <p><strong>Pago Realizado</strong></p>
-                        <p>El pago ha sido confirmado y procesado exitosamente,estaras recibiendo un correo con la confirmacion !.</p>
+                        <p>El pago ha sido confirmado y procesado exitosamente, estarás recibiendo un correo con la confirmación.</p>
                     </div>";
-
-                    
                 }
                 else
                 {
                     htmlContent += @"
                     <div class='payment-status'>
                         <p><strong>Estado de Pago:</strong> " + (pago?.EstadoPago ?? "No disponible") + @"</p>
+                    </div>";
+                }
+
+                // Mostrar el método de pago utilizado
+                if (pago != null)
+                {
+                    htmlContent += @"
+                    <div class='payment-status'>
+                        <p><strong>Método de Pago:</strong> " + (pago?.MetodoPago ?? "No disponible") + @"</p>
                     </div>";
                 }
             }
@@ -208,7 +215,7 @@ namespace paty22.Controllers
 
             htmlContent += @"
             <div class='footer'>
-                <p>¡Gracias por tu compra!,Si necesitas ayuda no dudes en contactarnos! </p>
+                <p>¡Gracias por tu compra! Si necesitas ayuda no dudes en contactarnos.</p>
             </div>
         </div>
     </body>

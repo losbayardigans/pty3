@@ -39,7 +39,8 @@ public partial class ProyectoFinalContext : DbContext
     public virtual DbSet<Proveedore> Proveedores { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    { if (optionsBuilder.IsConfigured) { } }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseMySql("server=localhost;port=3306;database=proyecto_final;uid=root", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.4.32-mariadb"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -117,13 +118,20 @@ public partial class ProyectoFinalContext : DbContext
             entity.Property(e => e.Contrasena)
                 .HasMaxLength(255)
                 .HasColumnName("contrasena");
+            entity.Property(e => e.Cvv)
+                .HasMaxLength(3)
+                .HasColumnName("CVV");
             entity.Property(e => e.Direccion)
                 .HasColumnType("text")
                 .HasColumnName("direccion");
             entity.Property(e => e.Email).HasColumnName("email");
+            entity.Property(e => e.FechaExpiracion)
+                .HasMaxLength(5)
+                .IsFixedLength();
             entity.Property(e => e.Nombre)
                 .HasMaxLength(255)
                 .HasColumnName("nombre");
+            entity.Property(e => e.NumeroTarjeta).HasMaxLength(16);
             entity.Property(e => e.Telefono)
                 .HasMaxLength(20)
                 .HasColumnName("telefono");

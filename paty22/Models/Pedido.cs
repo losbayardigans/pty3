@@ -20,5 +20,4 @@ public partial class Pedido
     public virtual ICollection<Pago> Pagos { get; set; } = new List<Pago>();
 
     public virtual ICollection<PedidoProducto> PedidoProductos { get; set; } = new List<PedidoProducto>();
-     
 }

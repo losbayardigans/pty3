@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-11-2024 a las 03:36:56
+-- Tiempo de generación: 02-12-2024 a las 03:07:36
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -42,7 +42,10 @@ CREATE TABLE `carro` (
 INSERT INTO `carro` (`id`, `cliente_id`, `producto_id`, `cantidad`, `fecha_agregado`) VALUES
 (67, 16, 3, 4, '2024-11-24 03:07:29'),
 (68, 16, 3, 1, '2024-11-24 03:07:29'),
-(71, 16, 1, 1, '2024-11-24 03:17:23');
+(71, 16, 1, 1, '2024-11-24 03:17:23'),
+(109, 10, 2, 1, '2024-11-28 18:23:12'),
+(110, 10, 3, 1, '2024-11-28 18:48:43'),
+(155, 26, 2, 2, '2024-12-01 19:46:49');
 
 -- --------------------------------------------------------
 
@@ -77,35 +80,40 @@ CREATE TABLE `clientes` (
   `email` varchar(255) NOT NULL,
   `telefono` varchar(20) DEFAULT NULL,
   `direccion` text DEFAULT NULL,
-  `contrasena` varchar(255) NOT NULL
+  `contrasena` varchar(255) NOT NULL,
+  `NumeroTarjeta` varchar(16) DEFAULT NULL,
+  `FechaExpiracion` char(5) DEFAULT NULL,
+  `CVV` varchar(3) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `clientes`
 --
 
-INSERT INTO `clientes` (`id`, `nombre`, `email`, `telefono`, `direccion`, `contrasena`) VALUES
-(1, 'facundo', 'facu391@gmail.com', NULL, NULL, '12345'),
-(2, 'facundo', 'facu39sadf1@gmail.com', NULL, NULL, '12345'),
-(4, 'facundo', 'facu3911@gmail.com', NULL, NULL, '1'),
-(5, 'facundo2', 'facu3@gmail.com', NULL, NULL, 'h1234'),
-(6, 'facundo2', 'facu23@gmail.com', '23450543', NULL, '21'),
-(7, 'facundoads', 'facu3912@gmail.com', '23450543', NULL, '1234'),
-(8, 'facundo5r', 'facu391p@gmail.com', '941654891', NULL, '$2a$11$y5ZTILJTGERltIBwKV0KsutFFYmjtgzNSFQnB5.WabMmoMIt4vSMq'),
-(9, 'facundo', 'facu3912ss@gmail.com', '23450543', NULL, '$2a$11$w470Nt7k6fZEOM9CDes8qu8JPiu5/AVV0MqNOYRJTU5XIK5Ioi3gy'),
-(10, 'facundos', 'facu391ss@gmail.com', '122423', NULL, '$2a$11$ORjjB/m5OY2INTOxHvXfvedpBRDwj0EF1lD4i5epIIQQlq29qZ8Q2'),
-(11, 'facundoy', 'h@gmail.com', '1', 'cinco oriente 4854', '$2a$11$5hgWb/JW/wpU.fjp4ZPVZ.Sv8ixSCYXfpludFZNrByonI73vsWEYK'),
-(12, 'a', 'a@gmail.com', '1234456', NULL, '$2a$11$Qac3dzKE4TBbgHjtnPBIHuHQfHduCONu1l5cabIa0M3co0k36nCl6'),
-(13, 'facundo', 'z@gmail.com', '21345', NULL, '$2a$11$T4W/yDqc/5DZJWWR.Jf/r.qGOEmUnAu.r0TrsN2ZrKS6DbB8jeJua'),
-(15, 'miguelasd', 'facgfu3@gmail.com', '3234234', NULL, '$2a$11$bwq7acWQN4hzHUMY8hMSau8oTutmE3vkZ.B.9nrggROuABwakbVRO'),
-(16, 'pruebas', 'prueba1@gmail.com', '23450543', 'cinco oriente 4854', '$2a$11$VoCQGZmzEbpNPcAxZ1rwceyBFHRscCUTMfvhI8GIMMuE3Xl/.0Y82'),
-(17, 'p', 'q@gmail.com', '12', NULL, '$2a$11$gD3Z4SYaxBumSaBtGuf9oOYrv661/n1PiZd5ArkN3BM6tQAG/.Hcy'),
-(18, 'facundo2', 'afacu391@gmail.com', '23450543a', NULL, '$2a$11$z1fF41yiFciVyRXfIum95uoYBqV8o4cJtyw74OXw8/AQRg1ZEZ9FK'),
-(19, 'gas', 'pe@gmail.com', '23450543', 'arica', '$2a$11$d7ACnxMb2asg9.grK6NgRuwThBnhcwk8iFDdFexAH3Vl8ffpFidRa'),
-(20, 'miguel', 'angel@gmail.com', '432', NULL, '$2a$11$kyMOLeE16rF.L9pxVa5Xru3AuZ61NPD6J9/l9O/7o/9Io27Tth7TK'),
-(21, 'ga', 'facu3a@gmail.com', '23450543', 'cinco oriente 4854', '$2a$11$xHArc9ALOwW/SZLSQvD6a.k2NxEnBA7N7rq7L1rht3GRu/BYpGywC'),
-(22, 'facundo', 'x@gmail.com', '21', NULL, '$2a$11$cbsI4jSSDX/KlUnx8rsP5uljsdy8qmHKoR6Fl9Gutpks56SkZaS4S'),
-(23, 'facundo', 'l@gmail.com', '3', 'cinco oriente 4854', '$2a$11$RFVRgGYjjA43AHa515I1p.iiGIBOqlCtGnHmnwUdTmK.MY93pNq6G');
+INSERT INTO `clientes` (`id`, `nombre`, `email`, `telefono`, `direccion`, `contrasena`, `NumeroTarjeta`, `FechaExpiracion`, `CVV`) VALUES
+(1, 'facundo', 'facu391@gmail.com', NULL, NULL, '12345', NULL, NULL, NULL),
+(2, 'facundo', 'facu39sadf1@gmail.com', NULL, NULL, '12345', NULL, NULL, NULL),
+(4, 'facundo', 'facu3911@gmail.com', NULL, NULL, '1', NULL, NULL, NULL),
+(5, 'facundo2', 'facu3@gmail.com', NULL, NULL, 'h1234', NULL, NULL, NULL),
+(6, 'facundo2', 'facu23@gmail.com', '23450543', NULL, '21', NULL, NULL, NULL),
+(7, 'facundoads', 'facu3912@gmail.com', '23450543', NULL, '1234', NULL, NULL, NULL),
+(8, 'facundo5r', 'facu391p@gmail.com', '941654891', NULL, '$2a$11$y5ZTILJTGERltIBwKV0KsutFFYmjtgzNSFQnB5.WabMmoMIt4vSMq', NULL, NULL, NULL),
+(9, 'facundo', 'facu3912ss@gmail.com', '23450543', NULL, '$2a$11$w470Nt7k6fZEOM9CDes8qu8JPiu5/AVV0MqNOYRJTU5XIK5Ioi3gy', NULL, NULL, NULL),
+(10, 'facundo', 'facu391ss@gmail.com', '23450543', 'cinco oriente 4854', '$2a$11$ORjjB/m5OY2INTOxHvXfvedpBRDwj0EF1lD4i5epIIQQlq29qZ8Q2', NULL, NULL, NULL),
+(11, 'ga', 'h@gmail.com', '23450543', 'cinco oriente 4854', '$2a$11$5hgWb/JW/wpU.fjp4ZPVZ.Sv8ixSCYXfpludFZNrByonI73vsWEYK', '3243534', '1234', '123'),
+(12, 'a', 'a@gmail.com', '1234456', NULL, '$2a$11$Qac3dzKE4TBbgHjtnPBIHuHQfHduCONu1l5cabIa0M3co0k36nCl6', NULL, NULL, NULL),
+(13, 'facundo', 'z@gmail.com', '21345', NULL, '$2a$11$T4W/yDqc/5DZJWWR.Jf/r.qGOEmUnAu.r0TrsN2ZrKS6DbB8jeJua', NULL, NULL, NULL),
+(15, 'miguelasd', 'facgfu3@gmail.com', '3234234', NULL, '$2a$11$bwq7acWQN4hzHUMY8hMSau8oTutmE3vkZ.B.9nrggROuABwakbVRO', NULL, NULL, NULL),
+(16, 'pruebas', 'prueba1@gmail.com', '23450543', 'cinco oriente 4854', '$2a$11$VoCQGZmzEbpNPcAxZ1rwceyBFHRscCUTMfvhI8GIMMuE3Xl/.0Y82', NULL, NULL, NULL),
+(17, 'p', 'q@gmail.com', '12', NULL, '$2a$11$gD3Z4SYaxBumSaBtGuf9oOYrv661/n1PiZd5ArkN3BM6tQAG/.Hcy', NULL, NULL, NULL),
+(18, 'facundo2', 'afacu391@gmail.com', '23450543a', NULL, '$2a$11$z1fF41yiFciVyRXfIum95uoYBqV8o4cJtyw74OXw8/AQRg1ZEZ9FK', NULL, NULL, NULL),
+(19, 'facundo', 'pe@gmail.com', '23450543', 'cinco oriente 4854', '$2a$11$d7ACnxMb2asg9.grK6NgRuwThBnhcwk8iFDdFexAH3Vl8ffpFidRa', '12345578990', '1234', '123'),
+(20, 'miguel', 'angel@gmail.com', '432', NULL, '$2a$11$kyMOLeE16rF.L9pxVa5Xru3AuZ61NPD6J9/l9O/7o/9Io27Tth7TK', NULL, NULL, NULL),
+(21, 'ga', 'facu3a@gmail.com', '23450543', 'cinco oriente 4854', '$2a$11$xHArc9ALOwW/SZLSQvD6a.k2NxEnBA7N7rq7L1rht3GRu/BYpGywC', NULL, NULL, NULL),
+(22, 'facundo', 'x@gmail.com', '21', NULL, '$2a$11$cbsI4jSSDX/KlUnx8rsP5uljsdy8qmHKoR6Fl9Gutpks56SkZaS4S', NULL, NULL, NULL),
+(23, 'facundo', 'l@gmail.com', '3', 'cinco oriente 4854', '$2a$11$RFVRgGYjjA43AHa515I1p.iiGIBOqlCtGnHmnwUdTmK.MY93pNq6G', NULL, NULL, NULL),
+(25, 'facundo', 'facu3910sdfx@gmail.com', '23450543', 'cinco oriente 4854', '$2a$11$h5OwAhHBynHFhH9ekN0pFetct9zv6KwgXasLQ5Gi3IjTQZe8MAlS2', NULL, NULL, NULL),
+(26, 'facundo', 'facu3914@gmail.com', '23450543', 'cinco oriente 4854', '$2a$11$59lYnNgA.egRHIB9rKZHVuwDNU7nUj2RtEBw9DKolKTTksx7iq79u', '2134567433', '21/24', '123');
 
 -- --------------------------------------------------------
 
@@ -241,7 +249,66 @@ INSERT INTO `pagos` (`id`, `pedido_id`, `metodo_pago`, `estado_pago`, `fecha_pag
 (66, 77, 'Efectivo', 'Pendiente', '2024-11-24 04:45:55'),
 (67, 78, 'Efectivo', 'Pendiente', '2024-11-24 04:46:09'),
 (68, 79, 'Efectivo', 'Pendiente', '2024-11-24 04:46:51'),
-(69, 80, 'Efectivo', 'Pendiente', '2024-11-24 04:52:33');
+(69, 80, 'Efectivo', 'Pendiente', '2024-11-24 04:52:33'),
+(70, 81, 'Tarjeta', 'Pendiente', '2024-11-24 23:40:58'),
+(71, 82, 'Tarjeta', 'Pendiente', '2024-11-28 17:42:16'),
+(72, 83, 'Efectivo', 'Pendiente', '2024-11-28 17:45:12'),
+(73, 84, 'Efectivo', 'Pendiente', '2024-11-28 17:51:36'),
+(74, 86, 'Efectivo', 'Pendiente', '2024-11-28 18:50:12'),
+(75, 87, 'PayPal', 'Pendiente', '2024-11-28 18:51:37'),
+(76, 88, 'Efectivo', 'Pendiente', '2024-11-28 18:54:32'),
+(77, 89, 'Tarjeta', 'Pendiente', '2024-11-28 19:09:54'),
+(78, 90, 'Efectivo', 'Pendiente', '2024-11-28 19:16:35'),
+(79, 91, 'Efectivo', 'Pendiente', '2024-11-28 19:19:33'),
+(80, 92, 'Tarjeta', 'Pendiente', '2024-11-28 19:38:43'),
+(81, 93, 'Tarjeta', 'Pendiente', '2024-11-28 19:47:30'),
+(82, 94, 'Tarjeta', 'Pendiente', '2024-11-28 19:50:49'),
+(83, 95, 'Tarjeta', 'Pendiente', '2024-11-28 19:53:28'),
+(84, 96, 'PayPal', 'Pendiente', '2024-11-28 19:58:11'),
+(85, 97, 'Tarjeta', 'Pendiente', '2024-11-28 20:08:13'),
+(86, 98, 'Efectivo', 'Pendiente', '2024-11-28 20:37:39'),
+(87, 99, 'Efectivo', 'Pendiente', '2024-11-28 20:54:06'),
+(88, 100, 'Tarjeta', 'Pendiente', '2024-11-28 21:05:13'),
+(89, 101, 'Efectivo', 'Pendiente', '2024-11-28 21:20:39'),
+(90, 102, 'Efectivo', 'Pendiente', '2024-11-28 21:22:54'),
+(91, 103, 'Tarjeta', 'Pendiente', '2024-11-29 01:44:24'),
+(92, 104, 'Efectivo', 'Pendiente', '2024-11-29 03:23:54'),
+(93, 105, 'Tarjeta', 'Pendiente', '2024-11-29 03:33:28'),
+(94, 106, 'Tarjeta', 'Pendiente', '2024-11-29 17:34:38'),
+(95, 107, 'Tarjeta', 'Pendiente', '2024-11-29 17:36:04'),
+(96, 108, 'Tarjeta', 'Pendiente', '2024-11-29 18:17:44'),
+(97, 109, 'Tarjeta', 'Pendiente', '2024-11-29 18:20:45'),
+(98, 110, 'Tarjeta', 'Pendiente', '2024-11-29 18:28:52'),
+(99, 111, 'Efectivo', 'Pendiente', '2024-11-29 18:41:03'),
+(100, 112, 'Tarjeta', 'Pendiente', '2024-11-29 19:58:43'),
+(101, 113, 'Tarjeta', 'Pendiente', '2024-11-29 19:59:28'),
+(102, 114, 'Efectivo', 'Pendiente', '2024-12-01 00:59:55'),
+(103, 115, 'Tarjeta', 'Pendiente', '2024-12-01 01:05:19'),
+(104, 117, 'Efectivo', 'Pendiente', '2024-12-01 02:22:02'),
+(105, 118, 'Tarjeta', 'Pendiente', '2024-12-01 02:30:22'),
+(106, 119, 'Tarjeta', 'Pagado', '2024-12-01 02:51:16'),
+(107, 120, 'Tarjeta', 'Pagado', '2024-12-01 02:58:28'),
+(108, 121, 'Bit-Coin', 'Pagado', '2024-12-01 14:38:55'),
+(109, 122, 'Tarjeta', 'Pagado', '2024-12-01 19:44:05'),
+(110, 123, 'Tarjeta', 'Pagado', '2024-12-01 19:46:43'),
+(111, 135, '', 'Pendiente', '2024-12-01 21:38:26'),
+(112, 136, '', 'Pendiente', '2024-12-01 21:40:10'),
+(113, 137, '', 'Pendiente', '2024-12-01 21:44:37'),
+(114, 143, 'Transferencia', 'Pendiente', '2024-12-01 21:50:43'),
+(115, 148, '', 'Pendiente', '2024-12-01 22:06:00'),
+(116, 149, '', 'Pendiente', '2024-12-01 22:07:09'),
+(117, 150, '', 'Pendiente', '2024-12-01 22:21:15'),
+(118, 151, '', 'Pendiente', '2024-12-01 22:22:06'),
+(119, 152, '', 'Pendiente', '2024-12-01 22:27:55'),
+(120, 153, '', 'Pendiente', '2024-12-01 22:29:38'),
+(121, 154, '', 'Pendiente', '2024-12-01 22:31:28'),
+(122, 162, 'Efectivo', 'Pagado', '2024-12-01 22:50:59'),
+(123, 163, 'Tarjeta', 'Pagado', '2024-12-01 22:51:42'),
+(124, 164, 'Tarjeta', 'Pagado', '2024-12-01 22:52:27'),
+(125, 165, 'Tarjeta', 'Pagado', '2024-12-01 22:54:40'),
+(126, 166, 'Efectivo', 'Pagado', '2024-12-01 22:55:05'),
+(127, 167, 'Bit-Coin', 'Pagado', '2024-12-01 22:55:33'),
+(128, 168, 'Efectivo', 'Pagado', '2024-12-01 23:01:50');
 
 -- --------------------------------------------------------
 
@@ -341,7 +408,95 @@ INSERT INTO `pedidos` (`id`, `cliente_id`, `fecha`, `estado`, `EstadoPedido`) VA
 (77, 23, '2024-11-24 04:45:55', 'Pendiente', 'Confirmado'),
 (78, 23, '2024-11-24 04:46:09', 'Pendiente', 'Confirmado'),
 (79, 19, '2024-11-24 04:46:51', 'Pendiente', 'Confirmado'),
-(80, 19, '2024-11-24 04:52:33', 'Pendiente', 'Confirmado');
+(80, 19, '2024-11-24 04:52:33', 'Pendiente', 'Confirmado'),
+(81, 11, '2024-11-24 23:40:58', 'Pendiente', 'Confirmado'),
+(82, 10, '2024-11-28 17:42:15', 'Pendiente', 'Confirmado'),
+(83, 10, '2024-11-28 17:45:12', 'Pendiente', 'Confirmado'),
+(84, 10, '2024-11-28 17:51:36', 'Pendiente', 'Confirmado'),
+(85, 10, '2024-11-28 18:48:51', 'Pendiente', 'Confirmado'),
+(86, 25, '2024-11-28 18:50:12', 'Pendiente', 'Confirmado'),
+(87, 25, '2024-11-28 18:51:37', 'Pendiente', 'Confirmado'),
+(88, 11, '2024-11-28 18:54:32', 'Pendiente', 'Confirmado'),
+(89, 11, '2024-11-28 19:09:54', 'Pendiente', 'Confirmado'),
+(90, 11, '2024-11-28 19:16:35', 'Pendiente', 'Confirmado'),
+(91, 11, '2024-11-28 19:19:33', 'Pendiente', 'Confirmado'),
+(92, 11, '2024-11-28 19:38:43', 'Pendiente', 'Confirmado'),
+(93, 11, '2024-11-28 19:47:30', 'Pendiente', 'Confirmado'),
+(94, 11, '2024-11-28 19:50:49', 'Pendiente', 'Confirmado'),
+(95, 11, '2024-11-28 19:53:28', 'Pendiente', 'Confirmado'),
+(96, 11, '2024-11-28 19:58:11', 'Pendiente', 'Confirmado'),
+(97, 11, '2024-11-28 20:08:13', 'Pendiente', 'Confirmado'),
+(98, 11, '2024-11-28 20:37:39', 'Pendiente', 'Confirmado'),
+(99, 11, '2024-11-28 20:54:06', 'Pendiente', 'Confirmado'),
+(100, 11, '2024-11-28 21:05:13', 'Pendiente', 'Confirmado'),
+(101, 11, '2024-11-28 21:20:39', 'Pendiente', 'Confirmado'),
+(102, 11, '2024-11-28 21:22:53', 'Pendiente', 'Confirmado'),
+(103, 11, '2024-11-29 01:44:24', 'Pendiente', 'Confirmado'),
+(104, 11, '2024-11-29 03:23:53', 'Pendiente', 'Confirmado'),
+(105, 11, '2024-11-29 03:33:28', 'Pendiente', 'Confirmado'),
+(106, 11, '2024-11-29 17:34:38', 'Pendiente', 'Confirmado'),
+(107, 26, '2024-11-29 17:36:04', 'Pendiente', 'Confirmado'),
+(108, 26, '2024-11-29 18:17:44', 'Pendiente', 'Confirmado'),
+(109, 26, '2024-11-29 18:20:45', 'Pendiente', 'Confirmado'),
+(110, 26, '2024-11-29 18:28:52', 'Pendiente', 'Confirmado'),
+(111, 26, '2024-11-29 18:41:03', 'Pendiente', 'Confirmado'),
+(112, 11, '2024-11-29 19:58:42', 'Pendiente', 'Confirmado'),
+(113, 11, '2024-11-29 19:59:27', 'Pendiente', 'Confirmado'),
+(114, 11, '2024-12-01 00:59:55', 'Pendiente', 'Confirmado'),
+(115, 11, '2024-12-01 01:05:19', 'Pendiente', 'Confirmado'),
+(116, 11, '2024-12-01 02:05:21', 'Pendiente', 'Confirmado'),
+(117, 11, '2024-12-01 02:22:02', 'Pendiente', 'Confirmado'),
+(118, 11, '2024-12-01 02:30:21', 'Pendiente', 'Confirmado'),
+(119, 11, '2024-12-01 02:51:16', 'Pendiente', 'Confirmado'),
+(120, 11, '2024-12-01 02:58:28', 'Pendiente', 'Confirmado'),
+(121, 11, '2024-12-01 14:38:55', 'Pendiente', 'Confirmado'),
+(122, 26, '2024-12-01 19:44:05', 'Pendiente', 'Confirmado'),
+(123, 26, '2024-12-01 19:46:43', 'Pendiente', 'Confirmado'),
+(124, 26, '2024-12-01 20:27:17', 'Pendiente', 'Confirmado'),
+(125, 26, '2024-12-01 20:28:58', 'Pendiente', 'Confirmado'),
+(126, 26, '2024-12-01 20:29:06', 'Pendiente', 'Confirmado'),
+(127, 26, '2024-12-01 20:36:18', 'Pendiente', 'Confirmado'),
+(128, 26, '2024-12-01 21:19:22', 'Pendiente', 'Confirmado'),
+(129, 26, '2024-12-01 21:27:20', 'Pendiente', 'Confirmado'),
+(130, 26, '2024-12-01 21:32:47', 'Pendiente', 'Confirmado'),
+(131, 26, '2024-12-01 21:32:55', 'Pendiente', 'Confirmado'),
+(132, 26, '2024-12-01 21:32:59', 'Pendiente', 'Confirmado'),
+(133, 26, '2024-12-01 21:33:53', 'Pendiente', 'Confirmado'),
+(134, 26, '2024-12-01 21:34:03', 'Pendiente', 'Confirmado'),
+(135, 11, '2024-12-01 21:38:26', 'Pendiente', 'Confirmado'),
+(136, 11, '2024-12-01 21:40:10', 'Pendiente', 'Confirmado'),
+(137, 11, '2024-12-01 21:44:37', 'Pendiente', 'Confirmado'),
+(138, 11, '2024-12-01 21:46:23', 'Pendiente', 'Confirmado'),
+(139, 11, '2024-12-01 21:46:58', 'Pendiente', 'Confirmado'),
+(140, 11, '2024-12-01 21:47:14', 'Pendiente', 'Confirmado'),
+(141, 11, '2024-12-01 21:47:24', 'Pendiente', 'Confirmado'),
+(142, 11, '2024-12-01 21:47:45', 'Pendiente', 'Confirmado'),
+(143, 11, '2024-12-01 21:50:43', 'Pendiente', 'Confirmado'),
+(144, 11, '2024-12-01 21:54:17', 'Pendiente', 'Confirmado'),
+(145, 11, '2024-12-01 21:57:13', 'Pendiente', 'Confirmado'),
+(146, 11, '2024-12-01 21:58:22', 'Pendiente', 'Confirmado'),
+(147, 11, '2024-12-01 22:05:26', 'Pendiente', 'Confirmado'),
+(148, 11, '2024-12-01 22:06:00', 'Pendiente', 'Confirmado'),
+(149, 11, '2024-12-01 22:07:09', 'Pendiente', 'Confirmado'),
+(150, 11, '2024-12-01 22:21:15', 'Pendiente', 'Confirmado'),
+(151, 11, '2024-12-01 22:22:06', 'Pendiente', 'Confirmado'),
+(152, 11, '2024-12-01 22:27:55', 'Pendiente', 'Confirmado'),
+(153, 11, '2024-12-01 22:29:38', 'Pendiente', 'Confirmado'),
+(154, 11, '2024-12-01 22:31:28', 'Pendiente', 'Confirmado'),
+(155, 11, '2024-12-01 22:37:59', 'Pendiente', 'Confirmado'),
+(156, 11, '2024-12-01 22:38:20', 'Pendiente', 'Confirmado'),
+(157, 11, '2024-12-01 22:38:30', 'Pendiente', 'Confirmado'),
+(158, 11, '2024-12-01 22:38:47', 'Pendiente', 'Confirmado'),
+(159, 11, '2024-12-01 22:49:43', 'Pendiente', 'Confirmado'),
+(160, 11, '2024-12-01 22:49:56', 'Pendiente', 'Confirmado'),
+(161, 11, '2024-12-01 22:50:36', 'Pendiente', 'Confirmado'),
+(162, 11, '2024-12-01 22:50:59', 'Pendiente', 'Confirmado'),
+(163, 11, '2024-12-01 22:51:42', 'Pendiente', 'Confirmado'),
+(164, 19, '2024-12-01 22:52:27', 'Pendiente', 'Confirmado'),
+(165, 19, '2024-12-01 22:54:40', 'Pendiente', 'Confirmado'),
+(166, 19, '2024-12-01 22:55:05', 'Pendiente', 'Confirmado'),
+(167, 19, '2024-12-01 22:55:33', 'Pendiente', 'Confirmado'),
+(168, 19, '2024-12-01 23:01:50', 'Pendiente', 'Confirmado');
 
 -- --------------------------------------------------------
 
@@ -405,7 +560,104 @@ INSERT INTO `pedido_producto` (`pedido_id`, `producto_id`, `cantidad`) VALUES
 (77, 3, 1),
 (78, 1, 1),
 (79, 2, 1),
-(80, 1, 1);
+(80, 1, 1),
+(81, 3, 1),
+(82, 2, 1),
+(83, 4, 1),
+(84, 4, 1),
+(85, 2, 1),
+(85, 3, 1),
+(86, 3, 1),
+(87, 7, 1),
+(88, 1, 1),
+(89, 3, 1),
+(90, 3, 1),
+(91, 3, 1),
+(92, 3, 1),
+(93, 3, 1),
+(94, 3, 1),
+(95, 4, 1),
+(96, 1, 1),
+(96, 3, 1),
+(97, 2, 2),
+(98, 3, 1),
+(99, 1, 1),
+(100, 3, 1),
+(101, 2, 1),
+(102, 3, 1),
+(103, 1, 1),
+(104, 3, 1),
+(105, 1, 1),
+(106, 2, 1),
+(107, 4, 1),
+(108, 1, 1),
+(109, 2, 1),
+(110, 2, 1),
+(111, 2, 1),
+(112, 1, 1),
+(113, 4, 1),
+(114, 1, 1),
+(114, 4, 1),
+(115, 2, 1),
+(116, 1, 2),
+(116, 2, 1),
+(117, 1, 2),
+(117, 2, 1),
+(118, 2, 1),
+(119, 1, 1),
+(120, 2, 1),
+(120, 3, 1),
+(121, 1, 1),
+(121, 2, 1),
+(122, 1, 1),
+(123, 2, 1),
+(124, 2, 1),
+(125, 2, 1),
+(126, 2, 1),
+(127, 2, 1),
+(128, 2, 2),
+(129, 2, 2),
+(130, 2, 2),
+(131, 2, 2),
+(132, 2, 2),
+(133, 2, 2),
+(134, 2, 2),
+(135, 2, 1),
+(136, 2, 1),
+(137, 3, 1),
+(138, 2, 1),
+(139, 2, 1),
+(140, 2, 1),
+(141, 2, 1),
+(142, 1, 1),
+(142, 2, 1),
+(143, 1, 1),
+(143, 2, 1),
+(144, 2, 1),
+(145, 2, 1),
+(146, 2, 1),
+(147, 2, 1),
+(148, 2, 1),
+(149, 2, 1),
+(150, 1, 1),
+(151, 2, 1),
+(152, 2, 1),
+(153, 2, 1),
+(154, 2, 1),
+(155, 2, 1),
+(156, 2, 1),
+(157, 2, 1),
+(158, 2, 1),
+(159, 2, 1),
+(160, 2, 1),
+(161, 2, 1),
+(162, 2, 1),
+(163, 1, 1),
+(164, 1, 1),
+(165, 2, 1),
+(166, 2, 1),
+(167, 2, 1),
+(168, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -437,7 +689,6 @@ INSERT INTO `productos` (`id`, `nombre`, `descripcion`, `precio`, `stock`, `cate
 (5, 'Chocolate Belga', 'Barra de chocolate oscuro belga 70% cacao', 3500.00, 25, 1, 2, 1, '/img/chocolate_belga.jpg'),
 (6, 'Cerveza Artesanal IPA', '330 ml de cerveza artesanal tipo IPA', 3000.00, 20, 3, 1, 1, '/img/cerveza_ipa.jpg'),
 (7, 'Miel de Ulmo', 'Frasco de 500 gr de miel pura de Ulmo', 5000.00, 18, 1, 4, 1, '/img/miel_ulmo.jpg'),
-(8, 'Cafe Arabico Premium', '250 gr de cafe en grano arabico premium', 6000.00, 12, 2, 3, 1, '/img/cafe_premiun.jpg'),
 (9, 'Whisky Single Malt', '700 ml de whisky escoces Single Malt', 14000.00, 5, 3, 3, 1, '/img/whisky_single_malt.jpg'),
 (10, 'Salmon Ahumado', '100 gr de salmon ahumado', 7200.00, 12, 1, 1, 1, '/img/salmon_ahumado.jpg'),
 (11, 'Agua Mineral Premium', '500 ml de agua mineral con gas', 1200.00, 50, 2, 4, 1, '/img/agua_mineral.jpg'),
@@ -628,7 +879,7 @@ ALTER TABLE `proveedores`
 -- AUTO_INCREMENT de la tabla `carro`
 --
 ALTER TABLE `carro`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=175;
 
 --
 -- AUTO_INCREMENT de la tabla `categorias`
@@ -640,19 +891,19 @@ ALTER TABLE `categorias`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=169;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
