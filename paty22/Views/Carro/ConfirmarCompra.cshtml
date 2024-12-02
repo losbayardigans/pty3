@@ -46,30 +46,29 @@
         text-align: center;
     }
 
-    .pedido-item {
+    ..pedido-item {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column; 
+        justify-content: flex-start; 
         padding: 10px 0;
         border-bottom: 1px solid #e0e0e0;
     }
 
-        .pedido-item .producto-info {
-            flex: 1;
-            padding-left: 10px;
-        }
+    .pedido-item .producto-info {
+        flex: 1;
+        padding-left: 10px;
+    }
 
-            .pedido-item .producto-info p {
-                margin: 0;
-                font-size: 1rem;
-                color: #333;
-            }
+    .pedido-item .precio {
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #333;
+        margin-top: 10px; 
+        text-align: left; 
+    }
 
-        .pedido-item .precio {
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #333;
-            margin-top: 10px; /* Ajustado para mayor espacio */
-        }
+
+  
 
     .form-group {
         margin-bottom: 15px;
@@ -118,16 +117,17 @@
         border-bottom: none;
     }
 
-    /* Ajustes al total */
+ 
     .total-container {
-        margin-top: 20px; /* Mayor espacio arriba del total */
+        margin-top: 20px; 
         font-size: 1.5rem;
         font-weight: bold;
         color: #333;
         text-align: center;
         padding: 15px 0;
-        border-top: 2px solid #e0e0e0; /* Línea separadora */
+        border-top: 2px solid #e0e0e0; 
     }
+
 
     .modal {
         display: none;
@@ -157,10 +157,10 @@
     }
 </style>
 
-<!-- Contenedor principal -->
+
 <div class="container">
 
-    <!-- Formulario de Cliente -->
+  
     <div class="cliente-container">
         <h3>Información de Contacto</h3>
         <form method="post" asp-action="ConfirmarCompra">
@@ -177,7 +177,7 @@
                 <input type="text" id="Direccion" name="Direccion" value="@Model.Direccion" required />
             </div>
 
-            <!-- Método de Pago -->
+        
             <div class="form-group">
                 <label for="PagoMetodo">Método de Pago:</label>
                 @Html.DropDownListFor(
@@ -190,64 +190,78 @@
                 new SelectListItem { Text = "PayPal", Value = "PayPal" },
                 new SelectListItem { Text = "Bit-Coin", Value = "Bit-Coin" }
                 },
-                         "Seleccione un método de pago",
+                       
                          new { @class = "form-control", @id = "PagoMetodo", onchange = "mostrarModal()" }
                          )
             </div>
 
-            <!-- Campo para mostrar el monto total -->
-            <div class="form-group">
-                <label for="PagoMonto">Total:</label>
-                <input type="text" id="PagoMonto" name="Pago.Monto" value="@ViewBag.Total.ToString("C", new System.Globalization.CultureInfo("es-CL"))" disabled />
-            </div>
+           
+          
 
-            <!-- Campos ocultos para los datos de la tarjeta -->
+         
             <input type="hidden" id="HiddenNumeroTarjeta" name="NumeroTarjeta" />
             <input type="hidden" id="HiddenFechaExpiracion" name="FechaExpiracion" />
             <input type="hidden" id="HiddenCVV" name="CVV" />
 
-            <!-- Botón para confirmar compra -->
+         
             <button type="submit" class="btn">Confirmar Compra</button>
         </form>
     </div>
 
-    <!-- Detalles del Pedido -->
     <div class="pedido-container">
         <h3>Detalles de tu Pedido</h3>
         <div>
             @if (Model.PedidoProductos != null && Model.PedidoProductos.Any())
             {
+                decimal totalPedido = 0;  
+
                 @foreach (var pedidoProducto in Model.PedidoProductos)
                 {
+                
+                    var cantidad = pedidoProducto.Cantidad ?? 0;  
+                    var precio = pedidoProducto.Producto.Precio ;  
+
                     <div class="pedido-item">
                         <div class="producto-info">
                             <p><strong>Producto:</strong> @pedidoProducto.Producto.Nombre</p>
-                            <p><strong>Cantidad:</strong> @pedidoProducto.Cantidad</p>
-                            <p><strong>Precio Unitario:</strong> @pedidoProducto.Producto.Precio.ToString("C", new System.Globalization.CultureInfo("es-CL"))</p>
+                            <p><strong>Cantidad:</strong> @cantidad</p>
+                            <p><strong>Precio Unitario:</strong> @precio.ToString("C", new System.Globalization.CultureInfo("es-CL"))</p>
                         </div>
+                      
                         <div class="precio">
                             <p>
-                                Total:   @string.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", pedidoProducto.Cantidad * pedidoProducto.Producto.Precio)
-                              
+                                Total: @string.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", cantidad * precio)
+                            </p>
                         </div>
                     </div>
+
+                    // Sumar el total de cada producto
+                    totalPedido += cantidad * precio;
                 }
+
+                <div class="total-container">
+                    <p><strong>Total del Pedido:</strong> @string.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", totalPedido)</p>
+                </div>
             }
             else
             {
                 <p>No hay productos en el pedido.</p>
             }
         </div>
-
-        <!-- Total a Pagar -->
-       
     </div>
-</div><!-- Modal para ingresar detalles de la tarjeta -->
+
+
+                    
+       
+
+</div>
+
 <div class="modal" id="TarjetaModal">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Detalles de la Tarjeta</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" onclick="cerrarModal()">
+          
+            <button type="button" class="close" aria-label="Cerrar" onclick="cerrarModal()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -266,7 +280,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cerrarModal()">Cerrar</button>
+          
+            <button type="button" class="btn btn-secondary" id="cerrarModalBtn">Cerrar</button>
             <button type="button" class="btn btn-primary" id="GuardarDatosTarjeta">Guardar</button>
         </div>
     </div>
@@ -275,61 +290,63 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-        // Función para mostrar el modal cuando se selecciona "Tarjeta" como método de pago
         function mostrarModal() {
-            var metodoPago = document.getElementById("PagoMetodo").value;  // Obtener el valor seleccionado
+            var metodoPago = document.getElementById("PagoMetodo").value;  
+            const modal = document.getElementById("TarjetaModal");
+
             if (metodoPago === "Tarjeta") {
-                document.getElementById("TarjetaModal").style.display = "block";  // Mostrar el modal
+                modal.style.display = "block"; 
             } else {
-                cerrarModal();  // Cerrar el modal si no se selecciona "Tarjeta"
+                modal.style.display = "none"; 
             }
         }
 
-        // Asignar el evento onchange al dropdown para mostrar el modal
+        
         const pagoMetodoSelect = document.getElementById("PagoMetodo");
         pagoMetodoSelect.addEventListener("change", mostrarModal);
 
-        // Función para cerrar el modal
+     
         function cerrarModal() {
             const modal = document.getElementById("TarjetaModal");
-            modal.style.display = "none";  // Ocultar el modal
+            modal.style.display = "none"; 
         }
 
-        // Evento para cerrar el modal cuando se hace clic fuera de él
+       
+        const closeBtn = document.querySelector(".close");
+        closeBtn.addEventListener("click", cerrarModal); 
+
+ 
+        const cerrarBtn = document.getElementById("cerrarModalBtn");
+        cerrarBtn.addEventListener("click", cerrarModal); 
+
+   
         window.onclick = function (event) {
             const modal = document.getElementById("TarjetaModal");
             if (event.target === modal) {
-                cerrarModal();
+                cerrarModal(); 
             }
         };
 
-        // Evento del botón "Guardar" para guardar los datos de la tarjeta
+       
         const guardarBtn = document.getElementById("GuardarDatosTarjeta");
 
         guardarBtn.addEventListener("click", function () {
-            // Recoger los valores de los campos de la tarjeta
             const numeroTarjeta = document.getElementById("NumeroTarjeta").value;
             const fechaExpiracion = document.getElementById("FechaExpiracion").value;
             const cvv = document.getElementById("Cvv").value;
 
-            // Verificar si los campos están vacíos
             if (!numeroTarjeta || !fechaExpiracion || !cvv) {
                 alert("Por favor, complete todos los campos.");
                 return;
             }
 
-            // Llenar los campos ocultos del formulario con los valores de la tarjeta
             document.getElementById("HiddenNumeroTarjeta").value = numeroTarjeta;
             document.getElementById("HiddenFechaExpiracion").value = fechaExpiracion;
             document.getElementById("HiddenCVV").value = cvv;
 
-            // Enviar el formulario después de guardar los datos de la tarjeta
-            document.forms[0].submit(); // Enviar el formulario de manera programática
-
-            // Cerrar el modal después de guardar los datos
-            cerrarModal();
+            document.forms[0].submit(); 
+            cerrarModal(); 
         });
-
     });
 
 </script>

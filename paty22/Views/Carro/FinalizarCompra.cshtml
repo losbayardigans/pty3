@@ -1,12 +1,12 @@
 ﻿@model paty22.Models.PedidoPagoViewModel
 
 @{
-    Layout = "_Layout";  // Asegúrate de tener configurado el layout si lo usas
+    Layout = "_Layout";
 }
 <html>
 <head>
     <style>
-        /* Estilos generales */
+  
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
@@ -71,7 +71,7 @@
             background-color: #f8f8f8;
         }
 
-        /* Total a pagar */
+   
         .total-container {
             font-size: 18px;
             color: #333;
@@ -79,14 +79,14 @@
             margin-bottom: 20px;
         }
 
-        /* Detalles de Pago */
+  
         .payment-details {
             font-size: 16px;
             color: #555;
             margin-bottom: 20px;
         }
 
-        /* Botón de descarga */
+     
         .btn-pdf {
             text-decoration: none;
             padding: 12px 25px;
@@ -108,7 +108,7 @@
     <div class="boleta-container">
         <h2>Boleta de Compra</h2>
 
-        <!-- Información del cliente -->
+       
         <div>
             <p><strong>Cliente:</strong> @Model.Nombre</p>
             <p><strong>Teléfono:</strong> @Model.Telefono</p>
@@ -117,7 +117,7 @@
 
         <hr>
 
-        <!-- Tabla de productos -->
+       
         <h3>Productos Comprados</h3>
         <table>
             <thead>
@@ -131,26 +131,32 @@
             <tbody>
                 @foreach (var item in Model.PedidoProductos)
                 {
+                    var cantidad = item.Cantidad ?? 0;  // Si es null, usa 0
+                    var precio = item.Producto.Precio ;  // Si es null, usa 0.0m
+                    var totalProducto = cantidad * precio;
+
                     <tr>
                         <td>@item.Producto.Nombre</td>
-                        <td>@item.Cantidad</td>
-                        <td>@String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", item.Producto.Precio)
-</td>
-                        <td>
-                            @String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}",item.Cantidad * item.Producto.Precio)
-                        </td>
+                        <td>@cantidad</td>
+                        <td>@String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", precio)</td>
+                        <td>@String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", totalProducto)</td>
                     </tr>
                 }
-
             </tbody>
         </table>
 
         <hr>
 
-        <!-- Total a Pagar -->
-       
+      
+        <div class="total-container">
+            <p>
+                <strong>Total a Pagar:</strong>
+                @String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}",
+                         Model.PedidoProductos.Sum(item => (item.Cantidad ?? 0) * (item.Producto.Precio )))
+            </p>
+        </div>
 
-        <!-- Detalles de Pago -->
+   
         <div class="payment-details">
             <p><strong>Estado de Pago:</strong> @Model.Pago.EstadoPago</p>
             <p><strong>Fecha de Pago:</strong> @Model.Pago.FechaPago.ToString("dd/MM/yyyy HH:mm")</p>
@@ -159,7 +165,7 @@
 
         <hr>
 
-        <!-- Botón para descargar PDF -->
+       
         <div style="text-align: center;">
             <a href="@Url.Action("GenerarPDF", "Pedidos", new { pedidoId = Model.Pedido.Id })" class="btn-pdf">
                 Descargar PDF

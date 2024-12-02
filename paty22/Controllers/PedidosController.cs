@@ -188,16 +188,23 @@ namespace paty22.Controllers
                 </thead>
                 <tbody>";
 
+            decimal totalPedido = 0; // Para calcular el total del pedido
+
             if (pedido?.PedidoProductos != null && pedido.PedidoProductos.Any())
             {
                 foreach (var item in pedido.PedidoProductos)
                 {
+                    var cantidad = item.Cantidad ?? 0;  // Si es null, usa 0
+                    var precio = item.Producto?.Precio ?? 0;  // Si es null, usa 0
+                    var totalProducto = cantidad * precio;
+                    totalPedido += totalProducto;
+
                     htmlContent += @"
                     <tr>
                         <td>" + (item.Producto?.Nombre ?? "Producto no disponible") + @"</td>
-                        <td>" + item.Cantidad + @"</td>
-                        <td>" + String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", item.Producto?.Precio ?? 0) + @"</td>
-                        <td>" + String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", item.Cantidad * (item.Producto?.Precio ?? 0)) + @"</td>
+                        <td>" + cantidad + @"</td>
+                        <td>" + String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", precio) + @"</td>
+                        <td>" + String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", totalProducto) + @"</td>
                     </tr>";
                 }
             }
@@ -212,6 +219,12 @@ namespace paty22.Controllers
             htmlContent += @"
                 </tbody>
             </table>";
+
+            // Mostrar total del pedido
+            htmlContent += @"
+            <div class='total'>
+                <p>Total: " + String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", totalPedido) + @"</p>
+            </div>";
 
             htmlContent += @"
             <div class='footer'>
