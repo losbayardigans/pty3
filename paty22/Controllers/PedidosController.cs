@@ -6,9 +6,9 @@ using paty22.Services;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using MailKit.Net.Smtp;
 using MimeKit;
-
+using MailKit.Net.Smtp;
+using MailKit.Security;
 
 namespace paty22.Controllers
 {
@@ -16,28 +16,30 @@ namespace paty22.Controllers
     {
         private readonly ProyectoFinalContext _context;
         private readonly SmtpSettings _smtpSettings;
-        public PedidosController(ProyectoFinalContext context, IOptions<SmtpSettings> smtpSettings)
+        private readonly IConfiguration _configuration;
+
+        public PedidosController(ProyectoFinalContext context, IOptions<SmtpSettings> smtpSettings, IConfiguration configuration)
         {
             _context = context;
             _smtpSettings = smtpSettings.Value;
+            _configuration = configuration;
         }
 
         public IActionResult GenerarPDF(int pedidoId)
         {
             // Obtener los datos del pedido desde la base de datos
             var pedido = _context.Pedidos
-                  .Include(p => p.Pagos)
-                .Include(p => p.PedidoProductos)
-                .ThenInclude(pp => pp.Producto)
-                .Include(p => p.Cliente)
-                .FirstOrDefault(p => p.Id == pedidoId);
+                     .Include(p => p.Pagos)
+                     .Include(p => p.PedidoProductos)
+                     .ThenInclude(pp => pp.Producto)
+                     .Include(p => p.Cliente)
+                     .FirstOrDefault(p => p.Id == pedidoId);
 
             if (pedido == null)
             {
                 return NotFound(); // Si no se encuentra el pedido, devolver error.
             }
 
-            // Crear el HTML del contenido del PDF
             var htmlContent = @"
 <html>
     <head>
@@ -236,29 +238,34 @@ namespace paty22.Controllers
 
 
 
-            // Guardar el contenido HTML en un archivo temporal
+            // Guardar HTML en un archivo temporal
             var htmlFilePath = Path.Combine(Path.GetTempPath(), "temp.html");
             System.IO.File.WriteAllText(htmlFilePath, htmlContent, Encoding.UTF8);
 
-            // Ruta al ejecutable wkhtmltopdf
-            var wkhtmltopdfPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "wkhtmltox", "wkhtmltopdf", "bin", "wkhtmltopdf.exe");
+            // Obtener la ruta de wkhtmltopdf desde la configuración
+            var wkhtmlToPdfPath = _configuration["WkHtmlToPdfPath"];
+
+            if (string.IsNullOrEmpty(wkhtmlToPdfPath))
+            {
+                return StatusCode(500, "La ruta de wkhtmltopdf no está configurada correctamente.");
+            }
 
             // Ruta del archivo PDF generado
-            var pdfFilePath = Path.Combine(Path.GetTempPath(), "pedido_" + pedidoId + ".pdf");
+            var pdfFilePath = Path.Combine(Path.GetTempPath(), $"pedido_{pedidoId}.pdf");
 
-            // Crear el proceso para ejecutar wkhtmltopdf
+            // Ejecutar el proceso de wkhtmltopdf
             var processStartInfo = new ProcessStartInfo
             {
-                FileName = wkhtmltopdfPath,
-                Arguments = $"\"{htmlFilePath}\" \"{pdfFilePath}\"", // Pasar los archivos como argumentos
-                CreateNoWindow = true, // No mostrar ventana
-                UseShellExecute = false, // No usar el shell
+                FileName = wkhtmlToPdfPath,
+                Arguments = $"\"{htmlFilePath}\" \"{pdfFilePath}\"",
+                CreateNoWindow = true,
+                UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
             };
 
             var process = Process.Start(processStartInfo);
-            process.WaitForExit(); // Esperar a que termine el proceso
+            process?.WaitForExit();
 
             // Verificar si el archivo PDF fue generado correctamente
             if (!System.IO.File.Exists(pdfFilePath))
@@ -266,37 +273,26 @@ namespace paty22.Controllers
                 return StatusCode(500, "Error al generar el PDF.");
             }
 
-            // Enviar el PDF como archivo al cliente
+            // Enviar el PDF por correo al cliente
             var pdfBytes = System.IO.File.ReadAllBytes(pdfFilePath);
-            var fileContentResult = File(pdfBytes, "application/pdf", $"Pedido_{pedidoId}.pdf");
-
-            // Crear el mensaje de correo
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("usuario", "codecraftsolution20@gmail.com"));
-            message.To.Add(new MailboxAddress("Cliente", pedido.Cliente.Email)); // Cambia por el email del cliente
+            message.From.Add(new MailboxAddress("Usuario", "tu-correo@example.com"));
+            message.To.Add(new MailboxAddress("Cliente", pedido?.Cliente?.Email)); // Asegúrate de que el correo del cliente esté disponible
             message.Subject = "Boleta de Compra - Pedido #" + pedidoId;
             message.Body = new TextPart("plain") { Text = $"Se adjunta el PDF del pedido #{pedidoId} realizado el {DateTime.Now:dd/MM/yyyy}." };
 
-            // Crear el adjunto (PDF)
             var attachment = new MimePart("application", "pdf")
             {
-                Content = new MimeContent(new MemoryStream(pdfBytes)), // Cargar el archivo PDF desde la memoria
+                Content = new MimeContent(new MemoryStream(pdfBytes)),
                 ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
                 FileName = $"Pedido_{pedidoId}.pdf"
             };
 
-            // Crear el multipart con el adjunto
-            var multipart = new Multipart("mixed")
-    {
-        message.Body,
-        attachment
-    };
-
+            var multipart = new Multipart("mixed") { message.Body, attachment };
             message.Body = multipart;
 
-            // Enviar el correo
             var client = new SmtpClient();
-            client.Connect(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            client.Connect(_smtpSettings.Server, _smtpSettings.Port, SecureSocketOptions.StartTls);
             client.Authenticate(_smtpSettings.User, _smtpSettings.Password);
             client.Send(message);
             client.Disconnect(true);
@@ -305,12 +301,7 @@ namespace paty22.Controllers
             System.IO.File.Delete(pdfFilePath);
 
             // Devolver el archivo PDF al cliente como descarga
-            return fileContentResult;
+            return File(pdfBytes, "application/pdf", $"Pedido_{pedidoId}.pdf");
         }
-
-
-
-       
-
     }
 }
