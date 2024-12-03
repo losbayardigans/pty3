@@ -26,290 +26,95 @@ namespace paty22.Controllers
         {
             // Obtener los datos del pedido desde la base de datos
             var pedido = _context.Pedidos
-                  .Include(p => p.Pagos)
+                .Include(p => p.Pagos)
                 .Include(p => p.PedidoProductos)
                 .ThenInclude(pp => pp.Producto)
                 .Include(p => p.Cliente)
                 .FirstOrDefault(p => p.Id == pedidoId);
 
-            if (pedido == null)
+            if (pedido == null || pedido.Cliente == null || string.IsNullOrEmpty(pedido.Cliente.Email))
             {
-                return NotFound(); // Si no se encuentra el pedido, devolver error.
+                return NotFound("Pedido o datos del cliente no encontrados.");
             }
-
-            // Crear el HTML del contenido del PDF
-            var htmlContent = @"
-<html>
-    <head>
-        <style>
-            body { 
-                font-family: Arial, sans-serif; 
-                color: #333; 
-                background-color: #f4f4f4; 
-                margin: 0; 
-                padding: 0;
-            }
-            .boleta-container {
-                width: 80%; 
-                max-width: 700px; 
-                margin: 20px auto; 
-                background-color: #fff; 
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-            .header {
-                text-align: center; 
-                font-size: 24px; 
-                margin-bottom: 20px;
-                color: #333;
-            }
-            .header p {
-                font-size: 14px;
-                color: #555;
-            }
-            .payment-status {
-                text-align: center; 
-                margin-bottom: 20px;
-                padding: 10px;
-                background-color: #e0f7fa; 
-                color: #00796b;
-                font-weight: bold;
-                border-radius: 5px;
-            }
-            .product-table { 
-                width: 100%; 
-                border-collapse: collapse; 
-                margin-top: 20px; 
-            }
-            .product-table th, .product-table td { 
-                padding: 8px; 
-                border: 1px solid #ddd; 
-                text-align: left; 
-                font-size: 14px;
-            }
-            .product-table th {
-                background-color: #f7f7f7;
-                color: #333;
-                font-weight: bold;
-            }
-            .product-table td {
-                color: #666;
-            }
-            .total {
-                font-weight: bold;
-                font-size: 18px;
-                margin-top: 20px;
-                text-align: right;
-                color: #333;
-            }
-            .footer {
-                text-align: center;
-                font-size: 12px;
-                margin-top: 20px;
-                color: #777;
-            }
-            .table-header { 
-                background-color: #f7f7f7; 
-                border-bottom: 2px solid #ddd; 
-            }
-        </style>
-    </head>
-    <body>
-        <div class='boleta-container'>
-            <div class='header'>
-                <h1>Boleta de Compra</h1>
-                <p>Fecha: " + DateTime.Now.ToString("dd/MM/yyyy") + @"</p>
-            </div>";
-
-            // Verificar el estado de pago
-            if (pedido.Pagos != null && pedido.Pagos.Any())
-            {
-                var pago = pedido.Pagos.FirstOrDefault();
-                if (pago != null && pago.EstadoPago == "Pagado")
-                {
-                    htmlContent += @"
-                    <div class='payment-status'>
-                        <p><strong>Pago Realizado</strong></p>
-                        <p>El pago ha sido confirmado y procesado exitosamente, estarás recibiendo un correo con la confirmación.</p>
-                    </div>";
-                }
-                else
-                {
-                    htmlContent += @"
-                    <div class='payment-status'>
-                        <p><strong>Estado de Pago:</strong> " + (pago?.EstadoPago ?? "No disponible") + @"</p>
-                    </div>";
-                }
-
-                // Mostrar el método de pago utilizado
-                if (pago != null)
-                {
-                    htmlContent += @"
-                    <div class='payment-status'>
-                        <p><strong>Método de Pago:</strong> " + (pago?.MetodoPago ?? "No disponible") + @"</p>
-                    </div>";
-                }
-            }
-            else
-            {
-                htmlContent += @"
-                <div class='payment-status'>
-                    <p><strong>Estado de Pago:</strong> No disponible</p>
-                </div>";
-            }
-
-            // Mostrar información del cliente
-            if (pedido?.Cliente != null)
-            {
-                htmlContent += @"
-                <h3>Cliente: " + (pedido.Cliente?.Nombre ?? "Nombre no disponible") + @"</h3>
-                <h4>Teléfono: " + (pedido.Cliente?.Telefono ?? "Teléfono no disponible") + @"</h4>
-                <h4>Dirección: " + (pedido.Cliente?.Direccion ?? "Dirección no disponible") + @"</h4>";
-            }
-            else
-            {
-                htmlContent += @"
-                <h3>Cliente: No disponible</h3>
-                <h4>Teléfono: No disponible</h4>
-                <h4>Dirección: No disponible</h4>";
-            }
-
-            htmlContent += @"
-            <h4>Productos Comprados:</h4>
-            <table class='product-table'>
-                <thead>
-                    <tr class='table-header'>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>";
-
-            decimal totalPedido = 0; // Para calcular el total del pedido
-
-            if (pedido?.PedidoProductos != null && pedido.PedidoProductos.Any())
-            {
-                foreach (var item in pedido.PedidoProductos)
-                {
-                    var cantidad = item.Cantidad ?? 0;  // Si es null, usa 0
-                    var precio = item.Producto?.Precio ?? 0;  // Si es null, usa 0
-                    var totalProducto = cantidad * precio;
-                    totalPedido += totalProducto;
-
-                    htmlContent += @"
-                    <tr>
-                        <td>" + (item.Producto?.Nombre ?? "Producto no disponible") + @"</td>
-                        <td>" + cantidad + @"</td>
-                        <td>" + String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", precio) + @"</td>
-                        <td>" + String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", totalProducto) + @"</td>
-                    </tr>";
-                }
-            }
-            else
-            {
-                htmlContent += @"
-                <tr>
-                    <td colspan='4'>No hay productos en este pedido</td>
-                </tr>";
-            }
-
-            htmlContent += @"
-                </tbody>
-            </table>";
-
-            // Mostrar total del pedido
-            htmlContent += @"
-            <div class='total'>
-                <p>Total: " + String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", totalPedido) + @"</p>
-            </div>";
-
-            htmlContent += @"
-            <div class='footer'>
-                <p>¡Gracias por tu compra! Si necesitas ayuda no dudes en contactarnos.</p>
-            </div>
-        </div>
-    </body>
-</html>";
-
-
-
-            // Guardar el contenido HTML en un archivo temporal
-            var htmlFilePath = Path.Combine(Path.GetTempPath(), "temp.html");
-            System.IO.File.WriteAllText(htmlFilePath, htmlContent, Encoding.UTF8);
-
-            // Ruta al ejecutable wkhtmltopdf
-            var wkhtmltopdfPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "wkhtmltox", "wkhtmltopdf", "bin", "wkhtmltopdf.exe");
-
-            // Ruta del archivo PDF generado
-            var pdfFilePath = Path.Combine(Path.GetTempPath(), "pedido_" + pedidoId + ".pdf");
-
-            // Crear el proceso para ejecutar wkhtmltopdf
-            var processStartInfo = new ProcessStartInfo
-            {
-                FileName = wkhtmltopdfPath,
-                Arguments = $"\"{htmlFilePath}\" \"{pdfFilePath}\"", // Pasar los archivos como argumentos
-                CreateNoWindow = true, // No mostrar ventana
-                UseShellExecute = false, // No usar el shell
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
-
-            var process = Process.Start(processStartInfo);
-            process.WaitForExit(); // Esperar a que termine el proceso
-
-            // Verificar si el archivo PDF fue generado correctamente
-            if (!System.IO.File.Exists(pdfFilePath))
-            {
-                return StatusCode(500, "Error al generar el PDF.");
-            }
-
-            // Enviar el PDF como archivo al cliente
-            var pdfBytes = System.IO.File.ReadAllBytes(pdfFilePath);
-            var fileContentResult = File(pdfBytes, "application/pdf", $"Pedido_{pedidoId}.pdf");
 
             // Crear el mensaje de correo
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("usuario", "codecraftsolution20@gmail.com"));
-            message.To.Add(new MailboxAddress("Cliente", pedido.Cliente.Email)); // Cambia por el email del cliente
-            message.Subject = "Boleta de Compra - Pedido #" + pedidoId;
-            message.Body = new TextPart("plain") { Text = $"Se adjunta el PDF del pedido #{pedidoId} realizado el {DateTime.Now:dd/MM/yyyy}." };
+            message.From.Add(new MailboxAddress("Tienda Online", "codecraftsolution20@gmail.com"));
+            message.To.Add(new MailboxAddress(pedido.Cliente.Nombre, pedido.Cliente.Email));
+            message.Subject = "Resumen de Pedido #" + pedidoId;
 
-            // Crear el adjunto (PDF)
-            var attachment = new MimePart("application", "pdf")
+            // Generar el contenido del correo
+            var emailBody = new StringBuilder();
+            emailBody.AppendLine($"<h1>¡Gracias por tu compra, {pedido.Cliente.Nombre}!</h1>");
+            emailBody.AppendLine($"<p>Te enviamos un resumen de tu pedido realizado el {DateTime.Now:dd/MM/yyyy}:</p>");
+
+            // Información del cliente
+            emailBody.AppendLine("<h2>Detalles del Cliente:</h2>");
+            emailBody.AppendLine($"<p>Nombre: {pedido.Cliente.Nombre}</p>");
+            emailBody.AppendLine($"<p>Teléfono: {pedido.Cliente.Telefono}</p>");
+            emailBody.AppendLine($"<p>Dirección: {pedido.Cliente.Direccion}</p>");
+
+            // Información del pedido
+            emailBody.AppendLine("<h2>Productos Comprados:</h2>");
+            if (pedido.PedidoProductos != null && pedido.PedidoProductos.Any())
             {
-                Content = new MimeContent(new MemoryStream(pdfBytes)), // Cargar el archivo PDF desde la memoria
-                ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-                FileName = $"Pedido_{pedidoId}.pdf"
+                emailBody.AppendLine("<ul>");
+                decimal total = 0;
+                foreach (var item in pedido.PedidoProductos)
+                {
+                    var cantidad = item.Cantidad ?? 0;
+                    var precio = item.Producto?.Precio ?? 0;
+                    var subtotal = cantidad * precio;
+                    total += subtotal;
+                    emailBody.AppendLine($"<li>{item.Producto?.Nombre} - Cantidad: {cantidad}, Precio: {String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", precio)}, Total: {String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", subtotal)}</li>");
+
+                }
+                emailBody.AppendLine("</ul>");
+                emailBody.AppendLine($"<p><strong>Total del Pedido: {String.Format(new System.Globalization.CultureInfo("es-CL"), "{0:C}", total)}</strong></p>");
+
+            }
+            else
+            {
+                emailBody.AppendLine("<p>No hay productos asociados a este pedido.</p>");
+            }
+
+            // Estado de pago
+            var pago = pedido.Pagos?.FirstOrDefault();
+            if (pago != null)
+            {
+                emailBody.AppendLine("<h2>Estado de Pago:</h2>");
+                emailBody.AppendLine($"<p>Estado: {pago.EstadoPago}</p>");
+                emailBody.AppendLine($"<p>Método: {pago.MetodoPago}</p>");
+            }
+            else
+            {
+                emailBody.AppendLine("<p>No se encontraron registros de pago asociados a este pedido.</p>");
+            }
+
+            emailBody.AppendLine("<p>Si tienes alguna duda, no dudes en contactarnos. ¡Gracias por confiar en nosotros!</p>");
+
+            // Asignar el cuerpo al mensaje
+            message.Body = new TextPart("html")
+            {
+                Text = emailBody.ToString()
             };
 
-            // Crear el multipart con el adjunto
-            var multipart = new Multipart("mixed")
-    {
-        message.Body,
-        attachment
-    };
-
-            message.Body = multipart;
-
             // Enviar el correo
-            var client = new SmtpClient();
-            client.Connect(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTls);
-            client.Authenticate(_smtpSettings.User, _smtpSettings.Password);
-            client.Send(message);
-            client.Disconnect(true);
+            using var client = new SmtpClient();
+            try
+            {
+                client.Connect(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTls);
+                client.Authenticate(_smtpSettings.User, _smtpSettings.Password);
+                client.Send(message);
+                client.Disconnect(true);
 
-            // Eliminar el archivo temporal después de enviarlo
-            System.IO.File.Delete(pdfFilePath);
-
-            // Devolver el archivo PDF al cliente como descarga
-            return fileContentResult;
+                return Ok("Correo enviado exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al enviar el correo: {ex.Message}");
+            }
         }
-
-
-
 
 
     }
